@@ -1,17 +1,18 @@
 const mysql = require('mysql');
+require('dotenv').config();
 
 // Create pool - allows us to query pool instead of db directly
 const pool = mysql.createPool({
-    connectionLimit: 10,
-    password: 'password1',
-    user: 'Kim',
-    database: 'workout_tracker',
-    host: 'localhost',
-    port: '8889'
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
 });
 
 
 let workout_trackerdb = {};
+
 
 // Function that returns all users in the database
 workout_trackerdb.all = () => {
