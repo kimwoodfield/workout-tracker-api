@@ -1,10 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
-const routes = require('./routes');
-const bodyParser = require('body-parser');
+const login = require('./routes/login');
+const register = require("./routes/register");
+
 
 
 // Set sessions
@@ -19,11 +21,12 @@ app.use(session({
 // Handles CORS
 app.use(cors());
 
-app.use('/api/User', routes);
+// Test route for register
+app.use("/login", login);
 
-app.get('/', (req, res) => {
-    res.send(`Let's get started!`);
-})
+
+// Test route for register
+app.use("/register", register);
 
 
 app.listen(process.env.PORT || '3000', () => {

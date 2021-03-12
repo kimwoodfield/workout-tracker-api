@@ -10,9 +10,7 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME,
 });
 
-
 let workout_trackerdb = {};
-
 
 // Function that returns all users in the database
 workout_trackerdb.all = () => {
@@ -27,5 +25,10 @@ workout_trackerdb.all = () => {
         });
     });
 };
+
+// Function that checks whether the user exists
+
+
+
 
 module.exports = workout_trackerdb;
