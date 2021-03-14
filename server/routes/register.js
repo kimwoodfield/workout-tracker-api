@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
   const body = req.body; // email and password sent by React
 
   try {
-    const users = await workout_trackerdb.findEmailInBody(body.email);
+    const users = await workout_trackerdb.findEmailInBody(body);
 
     if (users.total) {
       // Will run if users.total is higher than 0, which means something was found in the DB
@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    //await createUserInDB(body.email, body.password);
+    await workout_trackerdb.createUserInDB(body);
 
     return res.status(201).json({
       ok: true,
@@ -42,24 +42,6 @@ router.post("/", async (req, res) => {
     });
   }
 });
-
-
-// router.post("/", (req, res) => {
-//   const email = req.body.email;
-//   const fullname = req.body.fullname;
-//   const username = req.body.username;
-//   const password = req.body.password;
-//   const role = 'General';
-
-//   db.query("INSERT INTO User (email, full_name, username, password, role) VALUES (?, ?, ?, ?, ?)", [email, fullname, username, password, role], (err, result) => {
-//   if (err) {
-//       console.log(err)
-//     } else {
-//       res.send("values inserted");
-//     }
-//   }
-//   );
-// })
 
 
 
