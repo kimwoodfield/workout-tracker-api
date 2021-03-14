@@ -3,6 +3,12 @@ const db = require('../db');
 
 const router = express.Router();
 
+// Handles GET requests made to /login
+router.get("/", (req, res) => {
+    res.send(`Check if users login info exists`); 
+});
+
+// Handles POST requests made to /login
 router.post("/", (req, res) => {
     res.send(`User sending their login info`); 
 });

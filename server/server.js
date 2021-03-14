@@ -8,7 +8,6 @@ const login = require('./routes/login');
 const register = require("./routes/register");
 
 
-
 // Set sessions
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
@@ -17,6 +16,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: true }
 }));
+app.use(express.json());
 
 // Handles CORS
 app.use(cors());

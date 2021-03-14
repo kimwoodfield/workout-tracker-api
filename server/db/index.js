@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 require('dotenv').config();
 
-// Create pool - allows us to query pool instead of db directly
-const pool = mysql.createPool({
+// Create connection pool to query db
+const db = mysql.createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
@@ -10,12 +10,13 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME,
 });
 
+
 let workout_trackerdb = {};
 
 // Function that returns all users in the database
 workout_trackerdb.all = () => {
     return new Promise((resolve, reject) => {
-        pool.query('SELECT * FROM `User`', (err, results) => {
+        db.query('SELECT * FROM `User`', (err, results) => {
             // If there's an error, reject this promise
             if (err) {
                 return reject(err);
@@ -26,9 +27,29 @@ workout_trackerdb.all = () => {
     });
 };
 
-// Function that checks whether the user exists
+// Function that checks if a user exists
+workout_trackerdb.findEmailInBody = ({email}) => {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM `User` WHERE email = ?', [email], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in check user function')
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                total: results.length,
+                results
+              });
+        });
+    });
+};
+
+module.exports = {
+    getConnection: (callback) => {
+        return db.getConnection(callback);
+    },
+    workout_trackerdb
+}
 
 
-
-
-module.exports = workout_trackerdb;
