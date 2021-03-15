@@ -21,6 +21,7 @@ router.post("/", async (req, res) => {
         if (!userFound.total) {
             // Will run if users.total is less than 0, which means nothing was found in the DB
             return res.status(401).json({
+                status: 401,
                 ok: false,
                 msg: `Sorry - this user doesn't exist!`
             });
@@ -31,6 +32,7 @@ router.post("/", async (req, res) => {
         if (!passFound.total) {
             // Will run if users.total is less than 0, which means nothing was found in the DB
             return res.status(401).json({
+                status: 401,
                 ok: false,
                 msg: `Sorry - incorrect password. First Check.`
             });

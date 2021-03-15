@@ -7,6 +7,12 @@ const port = 3000;
 const login = require('./routes/login');
 const register = require("./routes/register");
 
+///////////////////////////////////////////////////
+// To-do List
+///////////////////////////////////////////////////
+// Use Crypto.js for hashing passwords
+// Use NPM Winston for logging interactions on app
+
 
 // Set sessions
 app.set('trust proxy', 1) // trust first proxy
@@ -19,7 +25,9 @@ app.use(session({
 app.use(express.json());
 
 // Handles CORS
-app.use(cors());
+app.use(cors(
+  { origin: 'http://localhost:3005'}
+));
 
 // Test route for register
 app.use("/login", login);
