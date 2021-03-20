@@ -124,6 +124,7 @@ workout_trackerdb.loginDetailsMatch = (body) => {
                 console.log('failed in check user function')
                 return reject(err);
             }
+            console.log(result);
             // Otherwise return our results
             return resolve({
                 result
@@ -131,6 +132,32 @@ workout_trackerdb.loginDetailsMatch = (body) => {
         });
     });
 };
+
+
+// Function that finds the User Id of the person logging in
+workout_trackerdb.findUserID = (body) => {
+    return new Promise((resolve, reject) => {
+        const username = body.username;
+        const password = body.password;
+        let userID;
+        db.query("SELECT `id` FROM `user` WHERE `username` = ? and `password` = ?", [username, password], (err, result) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in check user function')
+                return reject(err);
+            }
+            // Otherwise update the userID variable we created with the id of the user that logged in
+            // console.log(result[0].id);
+            userID = result[0].id;
+            // Then return the userID with the new id
+            return resolve({
+                userID
+              });
+        });
+    });
+};
+
+// SELECT id FROM User WHERE username = "Kwoodfield" AND password = "Password1"
 
 
 

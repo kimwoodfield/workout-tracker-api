@@ -1,6 +1,8 @@
 const express = require("express");
 const db = require("../db");
-const {workout_trackerdb, getConnection} = require("../db")
+const {workout_trackerdb, getConnection} = require("../db");
+const { body, validationResult } = require('express-validator');
+
 
 // Creates new instance of router
 const router = express.Router();

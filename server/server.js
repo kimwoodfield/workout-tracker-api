@@ -6,27 +6,36 @@ const app = express();
 const port = 3000;
 const login = require('./routes/login');
 const register = require("./routes/register");
+const log = require("./routes/log");
+const router = require("./routes/login");
+
 
 ///////////////////////////////////////////////////
 // To-do List
 ///////////////////////////////////////////////////
 // Use Crypto.js for hashing passwords
 // Use NPM Winston for logging interactions on app
-
+// Get sessions working
+// Finish register and login validation
 
 // Set sessions
-app.set('trust proxy', 1) // trust first proxy
+// app.set('trust proxy', 1) // trust first proxy
+
 app.use(session({
-  secret: 'keyboard cat',
+  name: 'User cookie',
+  secret: 'its a secret!',
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
+  saveUninitialized: false,
+  cookie: { 
+    secure: false,
+    sameSite: true,
+  },
 }));
 app.use(express.json());
 
 // Handles CORS
 app.use(cors(
-  { origin: 'http://localhost:3005'}
+  { credentials: true, origin: 'http://localhost:3005'}
 ));
 
 // Test route for register
@@ -35,6 +44,12 @@ app.use("/login", login);
 
 // Test route for register
 app.use("/register", register);
+
+// Test route for workout log
+app.use("/log", log);
+
+
+
 
 
 app.listen(process.env.PORT || '3000', () => {
