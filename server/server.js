@@ -7,6 +7,7 @@ const port = 3000;
 const login = require('./routes/login');
 const register = require("./routes/register");
 const log = require("./routes/log");
+const logout = require("./routes/logout");
 const router = require("./routes/login");
 
 
@@ -47,6 +48,9 @@ app.use("/register", register);
 
 // Test route for workout log
 app.use("/log", log);
+
+// Test route for workout logout
+app.use("/logout", logout);
 
 
 
