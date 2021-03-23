@@ -5,6 +5,8 @@ const { body, validationResult } = require('express-validator');
 
 const router = express.Router();
 
+let sessionUserID;
+
 // Handles GET requests made to /login
 router.get("/", (req, res) => {
     res.send(`Check if users login info exists`); 

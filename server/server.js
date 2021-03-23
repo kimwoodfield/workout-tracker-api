@@ -8,6 +8,7 @@ const login = require('./routes/login');
 const register = require("./routes/register");
 const log = require("./routes/log");
 const logout = require("./routes/logout");
+const addroutine = require("./routes/addroutine");
 const router = require("./routes/login");
 
 
@@ -42,7 +43,6 @@ app.use(cors(
 // Test route for register
 app.use("/login", login);
 
-
 // Test route for register
 app.use("/register", register);
 
@@ -51,6 +51,9 @@ app.use("/log", log);
 
 // Test route for workout logout
 app.use("/logout", logout);
+
+// Test route for addroutine
+app.use("/addroutine", addroutine);
 
 
 

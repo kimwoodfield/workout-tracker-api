@@ -5,7 +5,7 @@ const login = require('./login');
 // Creates new instance of router
 const router = express.Router();
 
-// If a user accesses this route, give them all of their past workout logs.
+// If a user doesn't have access, return a 403.
 router.get("/", (req ,res) => {
 
     console.log(req.session.userID);
