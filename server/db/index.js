@@ -43,7 +43,7 @@ workout_trackerdb.findEmailInBody = (body) => {
             return resolve({
                 total: results.length,
                 results
-              });
+            });
         });
     });
 };
@@ -67,7 +67,7 @@ workout_trackerdb.createUserInDB = (body) => {
             return resolve({
                 total: result.length,
                 result
-              });
+            });
         });
     });
 };
@@ -87,7 +87,7 @@ workout_trackerdb.findUserInBody = (body) => {
             return resolve({
                 total: results.length,
                 results
-              });
+            });
         });
     });
 };
@@ -107,7 +107,7 @@ workout_trackerdb.findPassInBody = (body) => {
             return resolve({
                 total: results.length,
                 results
-              });
+            });
         });
     });
 };
@@ -128,7 +128,7 @@ workout_trackerdb.loginDetailsMatch = (body) => {
             // Otherwise return our results
             return resolve({
                 result
-              });
+            });
         });
     });
 };
@@ -152,86 +152,222 @@ workout_trackerdb.findUserID = (body) => {
             // Then return the userID with the new id
             return resolve({
                 userID
-              });
+            });
         });
     });
 };
 
 
-workout_trackerdb.insertRoutineAndExercises = (body, userID) => {
+// Selects all of the exercises currently in the databases
+workout_trackerdb.showAllExercises = (body) => {
     return new Promise((resolve, reject) => {
+        console.log('Made it inside the showAllExercises db func');
+        db.query('SELECT `exercise_name`, `exercise_type` FROM `Exercise`', [], (err, results) => {
+            console.log('Made it inside the showAllExercises query');
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in check user function')
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
 
-        // Check to see if the posted data made it into the database function
-        console.log('The body made it inside the query function...', body);
-        console.log('The userID made it inside the query function...', userID);
+
+// Checks to see if an exercise exists
+workout_trackerdb.doesExerciseExist = (body) => {
+    return new Promise((resolve, reject) => {
+        const exercise = body.exercise_name;
+        db.query('SELECT * FROM `Exercise` WHERE exercise_name = ?', [exercise], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in doesExerciseExist query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                total: results.length,
+                results
+            });
+        });
+    });
+};
+
+
+/*------------------------------------*\
+    INSERT EXERCISE
+\*------------------------------------*/
+workout_trackerdb.insertExercise = (body) => {
+    return new Promise((resolve, reject) => {
+        console.log(body);
+
+        // Save the exercise name and type into a variable
+        const exercise = [
+            [body.exercise_name, body.exercise_type]
+        ];
+
+        db.query('INSERT INTO Exercise (exercise_name, exercise_type) VALUES ?', [exercise], (error, result) => {
+            // If there's an error, reject this promise
+            if (error) {
+                console.log('failed in insert exercise db query')
+                return reject(error);
+            }
+            // Otherwise return our results
+            return resolve({
+                result
+            });
+        });
+    });
+};
+
+
+/*------------------------------------*\
+    SELECT EXERCISE ID FROM EXERCISE
+\*------------------------------------*/
+workout_trackerdb.retrieveExerciseId = (currentExercise) => {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT id FROM `Exercise` WHERE exercise_name = (?)', [currentExercise], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in retrieveRoutineId query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
+
+
+/*------------------------------------*\
+    INSERT ROUTINE NAME
+\*------------------------------------*/
+workout_trackerdb.insertRoutineName = (body) => {
+    return new Promise((resolve, reject) => {
+        console.log(body);
+
+        // Save the exercise name and type into a variable
+        const routine = body.routine_name;
+        console.log('routine name is...', routine);
+
+        db.query('INSERT INTO Routine (routine_name) VALUES (?)', [routine], (error, result) => {
+            // If there's an error, reject this promise
+            if (error) {
+                console.log('failed in insertRoutineName db query')
+                return reject(error);
+            }
+            // Otherwise return our results
+            return resolve({
+                routine
+            });
+        });
+    });
+};
+
+
+/*------------------------------------*\
+    SELECT ROUTINE ID FROM ROUTINE
+\*------------------------------------*/
+workout_trackerdb.retrieveRoutineId = (routineName) => {
+    return new Promise((resolve, reject) => {
+        let routine = routineName.routine;
+        db.query('SELECT id FROM `Routine` WHERE routine_name = (?)', [routine], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in retrieveRoutineId query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
+
+
+// Insert a new routine and exercises
+workout_trackerdb.insertRoutine = (body, userID) => {
+    return new Promise((resolve, reject) => {
+        console.log('The body made it inside the db func..', body);
 
         // Assign the posted form data to variables
         const routine_name = body.routine_name;
-        console.log('routine name is now...', routine_name);
+        console.log('Check we stored routine_name correctly..', routine_name);
 
         // Save all of the exercises
-        let exercises = [
-            [body.firstExerciseName, body.firstExerciseType],
-            [body.secondExerciseName, body.secondExerciseType],
-            [body.thirdExerciseName, body.thirdExerciseType],
-            [body.fourthExerciseName, body.fourthExerciseType],
-            [body.fifthExerciseName, body.fifthExerciseType]
+        const exercises = [
+            body.first_exercise,
+            body.second_exercise,
+            body.third_exercise,
+            body.fourth_exercise,
+            body.fifth_exercise
         ];
-        console.log('exercises are...', exercises);
+        console.log('Check we stored exercises correctly...', exercises);
 
-        // Creates variable to store the RoutineID and ExerciseIDs into
+        // Create variables to store the routineID and exerciseIDs into
         let routineID;
         let exerciseIDs = [];
 
-        // Connect to the database
-        db.getConnection(function(err, connection) {
-            connection.beginTransaction(function(err) {
+        // Connect to the datatabase
+        db.getConnection(function (err, connection) {
+            connection.beginTransaction(function (err) {
                 if (err) {
-                    console.log('Hit first error');
                     throw err;
-                } else {
-                    // INSERTS THE ROUTINE NAME INTO THE ROUTINE TABLE
-                    db.query("INSERT INTO Routine (routine_name) VALUES (?)", [routine_name], (err, rows) => {
-                        console.log('Made it into the first query');
-                        if (err) {
-                            console.log('Hit second error');
-                            return connection.rollback(function() {
-                                connection.release();
-                                throw err;
-                            });
-                        } else {
-                            console.log('Successfully inserted into the Routine table');
-                        }
-                        routineID = rows.insertId;
-                        console.log('routineID before we close the query is... ', routineID);
-                    }) // Brackets for first query
-                    // END OF FIRST QUERY
-
-                    // START OF SECOND QUERY
-                    for (let i = 0; i < exercises.length; i++) {
-                        let currentExercise = exercises[i];
-                        db.query("INSERT INTO Exercise (exercise_name, exercise_type) VALUES (?)", [currentExercise], (err, rows) => {
-                            console.log('Made it into the second query');
-                            console.log('We are currently at the ', i, ' iteration');
-                            if (err) {
-                                console.log('Hit third error');
-                                return connection.rollback(function() {
-                                    connection.release();
-                                    throw err;
-                                });
-                            } else {
-                                console.log('Successfully inserted into the Exercise table on the ', i, ' iteration');
-                            }
-                            exerciseIDs.push(rows.insertId);
-                        })
-                    } // End of loop
-                    console.log('Our routineID is...', routineID);
-                    console.log('Our exerciseIDs are...', exerciseIDs);
                 }
-            })
-        })
-    })
-}
+                console.log('We are just before the first query')
+                // Insert into the Routine table
+                connection.query('INSERT INTO Routine (routine_name) VALUES (?)', [routine_name], (error, rows) => {
+                    console.log('Made it inside the first query');
+                    if (error) {
+                        return connection.rollback(function () {
+                            connection.release();
+                            throw error;
+                        });
+                    } else {
+                        console.log('We successfully inserted the routine_name');
+                        routineID = rows.insertId;
+                        console.log('The last inserted ID for routine_name is..', routineID);
+                    }
+                }); // Ends first query
+/*
+                // Insert into the Exercises table
+                connection.query('INSERT INTO Exercise (exercise_name, exercise_type) VALUES ?', [exercises], (error, rows) => {
+                    console.log('Made it into the second query');
+                    if (error) {
+                        return connection.rollback(function() {
+                            connection.release();
+                            throw error;
+                        });
+                    } else {
+                        console.log('We successfully inserted the exercises into the Exercise table');
+                        exerciseIDs.push(rows.insertId);
+                        console.log('The last inserted ID for Exercises is..', exerciseIDs);
+                    }
+                })
+                console.log('This is the array of primary keys from the Exercise table...', exerciseIDs);
+*/
+            }); // Ends the transaction
+            
+            connection.commit(function (err) {
+                if (err) {
+                    return connection.rollback(function () {
+                        throw err;
+                    });
+                }
+                console.log('DB func finished!');
+            }); // End of commit
+        }) // Ends the connection
+    }); // Ends Promise
+}; // Ends DB Function
+
+
 
 
 module.exports = {
@@ -240,5 +376,3 @@ module.exports = {
     },
     workout_trackerdb
 }
-
-

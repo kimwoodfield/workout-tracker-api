@@ -7,7 +7,7 @@ const { body, validationResult } = require('express-validator');
 // Creates new instance of router
 const router = express.Router();
 
-// If a user doesn't have access, return a 403.
+
 router.get("/", (req ,res) => {
 
     console.log(req.session.userID);
@@ -35,23 +35,57 @@ router.post("/", async (req ,res) => {
     console.log('We received the body!', body);
 
     const userID = req.session.userID;
-    console.log('The current userID is... ', userID);
+    console.log('We received the userID... ', userID);
 
     // Try to send the data to the database!
     try {
 
-        console.log('Made it inside the try catch block')
+        console.log('Made it inside the try catch block');
+        console.log('first exercise is...', body.first_exercise)
 
-        // Wait here while we check to see if the data has been inserted into the database.
-        await workout_trackerdb.insertRoutineAndExercises(body, userID);
+        // Insert the new routine name
+        let retrievedRoutineName = await workout_trackerdb.insertRoutineName(body, userID);
+        let routineName = retrievedRoutineName.routine;
+        console.log('We awaited the insertRoutineName function and got ... ', routineName);
 
-        // If the data was inserted correctly, return a 201 to the frontend.
+        // Grab the Primary Key of the routine_name we just inserted
+        let retrievedRoutineId = await workout_trackerdb.retrieveRoutineId(retrievedRoutineName);
+        let routineID = retrievedRoutineId.results[0].id;
+        console.log('We awaited the retrieveRoutineId function and got ... ', routineID);
+
+        // Collect the Primary Keys of the exercises the user chose for the routine
+        let allExercises = [
+            body.first_exercise,
+            body.second_exercise,
+            body.third_exercise,
+            body.fourth_exercise,
+            body.fifth_exercise
+        ];
+        let exerciseID = [];
+
+        console.log(allExercises[0]);
+
+        for (let i = 0; i < allExercises.length; i++) {
+            let currentExercise = allExercises[i];
+            let retrievedExerciseId = await workout_trackerdb.retrieveExerciseId(currentExercise);
+            exerciseID.push(retrievedExerciseId.results[0].id);
+            console.log('We are at the ', i, 'th position and just selected the Primary key for ', currentExercise);
+        }
+        console.log('The loop finished and the collected exerciseIDs are ... ', exerciseID);
+
+        // Insert into the RoutineExercise joining table by inserting the Primary Key of the correct routine_name and the Primary Key's for each exercise the user submitted
+        
+
+
+
+        // If all of the data was inserted correctly, return a 201
         return res.status(201).json({
             ok: true,
             msg: 'Login successful!'
         });
 
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             ok: false,
             msg: 'DB Error!'

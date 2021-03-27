@@ -7,8 +7,11 @@ const port = 3000;
 const login = require('./routes/login');
 const register = require("./routes/register");
 const log = require("./routes/log");
+const exercises = require("./routes/exercises");
 const logout = require("./routes/logout");
 const addroutine = require("./routes/addroutine");
+const validate = require("./routes/validate");
+const addexercise = require("./routes/addexercise");
 const router = require("./routes/login");
 
 
@@ -43,6 +46,9 @@ app.use(cors(
 // Test route for register
 app.use("/login", login);
 
+// Test route for workout logout
+app.use("/validate", validate);
+
 // Test route for register
 app.use("/register", register);
 
@@ -52,8 +58,14 @@ app.use("/log", log);
 // Test route for workout logout
 app.use("/logout", logout);
 
+// Test route for workout logout
+app.use("/exercises", exercises);
+
 // Test route for addroutine
 app.use("/addroutine", addroutine);
+
+// Test route for addexercise
+app.use("/addexercise", addexercise);
 
 
 
