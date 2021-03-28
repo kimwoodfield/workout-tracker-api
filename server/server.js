@@ -10,23 +10,12 @@ const log = require("./routes/log");
 const exercises = require("./routes/exercises");
 const routines = require("./routes/routines");
 const logout = require("./routes/logout");
-const addroutine = require("./routes/addroutine");
 const validate = require("./routes/validate");
-const addexercise = require("./routes/addexercise");
 const router = require("./routes/login");
 
 
-///////////////////////////////////////////////////
-// To-do List
-///////////////////////////////////////////////////
-// Use Crypto.js for hashing passwords
-// Use NPM Winston for logging interactions on app
-// Get sessions working
-// Finish register and login validation
-
 // Set sessions
 // app.set('trust proxy', 1) // trust first proxy
-
 app.use(session({
   name: 'User cookie',
   secret: 'its a secret!',
@@ -39,40 +28,21 @@ app.use(session({
 }));
 app.use(express.json());
 
+
 // Handles CORS
 app.use(cors(
   { credentials: true, origin: 'http://localhost:3005'}
 ));
 
-// Test route for register
+
+// Handle routes
 app.use("/login", login);
-
-// Test route for workout logout
 app.use("/validate", validate);
-
-// Test route for register
 app.use("/register", register);
-
-// Test route for workout log
 app.use("/log", log);
-
-// Test route for workout logout
 app.use("/logout", logout);
-
-// Test route for workout logout
 app.use("/exercises", exercises);
-
-// Test route for workout logout
 app.use("/routines", routines);
-
-// Test route for addroutine
-app.use("/addroutine", addroutine);
-
-// Test route for addexercise
-app.use("/addexercise", addexercise);
-
-
-
 
 
 app.listen(process.env.PORT || '3000', () => {
