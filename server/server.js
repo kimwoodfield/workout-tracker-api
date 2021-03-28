@@ -8,6 +8,7 @@ const login = require('./routes/login');
 const register = require("./routes/register");
 const log = require("./routes/log");
 const exercises = require("./routes/exercises");
+const routines = require("./routes/routines");
 const logout = require("./routes/logout");
 const addroutine = require("./routes/addroutine");
 const validate = require("./routes/validate");
@@ -60,6 +61,9 @@ app.use("/logout", logout);
 
 // Test route for workout logout
 app.use("/exercises", exercises);
+
+// Test route for workout logout
+app.use("/routines", routines);
 
 // Test route for addroutine
 app.use("/addroutine", addroutine);

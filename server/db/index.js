@@ -80,6 +80,7 @@ workout_trackerdb.findUserInBody = (body) => {
         db.query('SELECT * FROM `User` WHERE username = ?', [username], (err, results) => {
             // If there's an error, reject this promise
             if (err) {
+                console.log(err);
                 console.log('failed in check user function')
                 return reject(err);
             }
@@ -290,6 +291,50 @@ workout_trackerdb.retrieveRoutineId = (routineName) => {
         });
     });
 };
+
+
+/*--------------------------------------------------------*\
+    INSERT ROUTINE & EXERCISE INTO ROUTINEEXERCISE TABLE
+\*--------------------------------------------------------*/
+workout_trackerdb.insertIntoRoutineExercise = (routineIDarr, currentExercise) => {
+    return new Promise((resolve, reject) => {
+        db.query('INSERT INTO `RoutineExercise` (routine_id, exercise_id) VALUES (?, ?)', [routineIDarr, currentExercise], (error, result) => {
+            // If there's an error, reject this promise
+            if (error) {
+                console.log('failed in insertIntoRoutineExercise db query')
+                return reject(error);
+            }
+            // Otherwise return our results
+            return resolve({
+                result
+            });
+        });
+    });
+};
+
+
+/*------------------------------------*\
+    DISPLAY ALL ROUTINES IN ROUTINE
+\*------------------------------------*/
+workout_trackerdb.showAllRoutines = (body) => {
+    return new Promise((resolve, reject) => {
+        console.log('Made it inside the showAllRoutines db func');
+        db.query('SELECT `routine_name` FROM `Routine`', [], (err, results) => {
+            console.log('Made it inside the showAllRoutines query');
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in showAllRoutines function')
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
+
+
 
 
 // Insert a new routine and exercises
