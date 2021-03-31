@@ -167,7 +167,8 @@ workout_trackerdb.showAllExercises = (body) => {
             console.log('Made it inside the showAllExercises query');
             // If there's an error, reject this promise
             if (err) {
-                console.log('failed in check user function')
+                console.log('failed in check user function');
+                console.log(err);
                 return reject(err);
             }
             // Otherwise return our results
@@ -272,9 +273,9 @@ workout_trackerdb.insertRoutineName = (body) => {
 };
 
 
-/*------------------------------------*\
-    SELECT ROUTINE ID FROM ROUTINE
-\*------------------------------------*/
+/*-------------------------------------------*\
+    SELECT SPECIFIC ROUTINE ID FROM ROUTINE
+\*-------------------------------------------*/
 workout_trackerdb.retrieveRoutineId = (routineName) => {
     return new Promise((resolve, reject) => {
         let routine = routineName.routine;
@@ -282,6 +283,27 @@ workout_trackerdb.retrieveRoutineId = (routineName) => {
             // If there's an error, reject this promise
             if (err) {
                 console.log('failed in retrieveRoutineId query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
+
+
+/*------------------------------------------*\
+    GRAB THE ROUTINE ID OF A ROUTINE NAME
+\*------------------------------------------*/
+workout_trackerdb.retrieveAllRoutineId = (routineName) => {
+    return new Promise((resolve, reject) => {
+        let routine = routineName.routine;
+        db.query('SELECT id FROM `Routine`', [routine], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in retrieveAllRoutineId query');
                 return reject(err);
             }
             // Otherwise return our results
@@ -335,83 +357,113 @@ workout_trackerdb.showAllRoutines = (body) => {
 };
 
 
-
-
-// Insert a new routine and exercises
-workout_trackerdb.insertRoutine = (body, userID) => {
+/*---------------------------------------------------------*\
+    DISPLAY ALL ROUTINES & EXERCISES FROM ROUTINEEXERCISE
+\*---------------------------------------------------------*/
+workout_trackerdb.grabRoutineExerciseName = (body) => {
     return new Promise((resolve, reject) => {
-        console.log('The body made it inside the db func..', body);
+        console.log('Made it inside the grabRoutineExerciseName db func');
+        db.query('SELECT routine.routine_name, exercise.exercise_name FROM routine JOIN RoutineExercise ON (routine.id=RoutineExercise.routine_id) JOIN exercise ON (exercise.id=RoutineExercise.exercise_id) GROUP BY [routine.id]', [], (err, results) => {
+            console.log('Made it inside the grabRoutineExerciseName query');
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in grabRoutineExerciseName function');
+                console.log(err);
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
 
-        // Assign the posted form data to variables
-        const routine_name = body.routine_name;
-        console.log('Check we stored routine_name correctly..', routine_name);
 
-        // Save all of the exercises
-        const exercises = [
-            body.first_exercise,
-            body.second_exercise,
-            body.third_exercise,
-            body.fourth_exercise,
-            body.fifth_exercise
-        ];
-        console.log('Check we stored exercises correctly...', exercises);
 
-        // Create variables to store the routineID and exerciseIDs into
-        let routineID;
-        let exerciseIDs = [];
+/*-------------------------------------------------------------------------*\
+                         Queries for Routines page
+\*-------------------------------------------------------------------------*/
 
-        // Connect to the datatabase
-        db.getConnection(function (err, connection) {
-            connection.beginTransaction(function (err) {
-                if (err) {
-                    throw err;
-                }
-                console.log('We are just before the first query')
-                // Insert into the Routine table
-                connection.query('INSERT INTO Routine (routine_name) VALUES (?)', [routine_name], (error, rows) => {
-                    console.log('Made it inside the first query');
-                    if (error) {
-                        return connection.rollback(function () {
-                            connection.release();
-                            throw error;
-                        });
-                    } else {
-                        console.log('We successfully inserted the routine_name');
-                        routineID = rows.insertId;
-                        console.log('The last inserted ID for routine_name is..', routineID);
-                    }
-                }); // Ends first query
-/*
-                // Insert into the Exercises table
-                connection.query('INSERT INTO Exercise (exercise_name, exercise_type) VALUES ?', [exercises], (error, rows) => {
-                    console.log('Made it into the second query');
-                    if (error) {
-                        return connection.rollback(function() {
-                            connection.release();
-                            throw error;
-                        });
-                    } else {
-                        console.log('We successfully inserted the exercises into the Exercise table');
-                        exerciseIDs.push(rows.insertId);
-                        console.log('The last inserted ID for Exercises is..', exerciseIDs);
-                    }
-                })
-                console.log('This is the array of primary keys from the Exercise table...', exerciseIDs);
-*/
-            }); // Ends the transaction
-            
-            connection.commit(function (err) {
-                if (err) {
-                    return connection.rollback(function () {
-                        throw err;
-                    });
-                }
-                console.log('DB func finished!');
-            }); // End of commit
-        }) // Ends the connection
-    }); // Ends Promise
-}; // Ends DB Function
 
+/*--------------------------------------*\
+    Select all routine_id from routine
+\*--------------------------------------*/
+workout_trackerdb.selectAllRoutineId = () => {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT id FROM Routine', [], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in selectAllRoutineId query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
+
+
+/*------------------------------------------------------------------------*\
+    Select routine_name from routine where routine_id matches
+\*------------------------------------------------------------------------*/
+workout_trackerdb.findRoutineName = (currentRoutineId) => {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT routine_name FROM Routine WHERE id = (?)', [currentRoutineId], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in retrieveAllRoutineId query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
+
+
+/*------------------------------------------------------------------------*\
+    Select exerciseIds associated to specific RoutineId
+\*------------------------------------------------------------------------*/
+workout_trackerdb.findExerciseIds = (currentRoutineId) => {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT exercise_id FROM RoutineExercise WHERE routine_id = (?)', [currentRoutineId], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in retrieveAllRoutineId query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
+
+
+/*------------------------------------------------------------------------*\
+    Select exercise_name associated to specific exercise_id
+\*------------------------------------------------------------------------*/
+workout_trackerdb.findExerciseName = (currentId) => {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT exercise_name FROM `Exercise` WHERE id = (?)', [currentId], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in retrieveAllRoutineId query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
 
 
 
