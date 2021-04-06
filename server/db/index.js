@@ -294,13 +294,33 @@ workout_trackerdb.retrieveRoutineId = (routineName) => {
 };
 
 
+/*-------------------------------------------*\
+    SELECT SPECIFIC ROUTINE ID FROM ROUTINE
+\*-------------------------------------------*/
+workout_trackerdb.retrieveRoutineId = (routineName) => {
+    return new Promise((resolve, reject) => {
+        let routine = routineName.routine;
+        db.query('SELECT id FROM `Routine` WHERE routine_name = (?)', [routine], (err, results) => {
+            // If there's an error, reject this promise
+            if (err) {
+                console.log('failed in retrieveRoutineId query');
+                return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+                results
+            });
+        });
+    });
+};
+
+
 /*------------------------------------------*\
     GRAB THE ROUTINE ID OF A ROUTINE NAME
 \*------------------------------------------*/
-workout_trackerdb.retrieveAllRoutineId = (routineName) => {
+workout_trackerdb.findRoutineIdByName = (routine_name) => {
     return new Promise((resolve, reject) => {
-        let routine = routineName.routine;
-        db.query('SELECT id FROM `Routine`', [routine], (err, results) => {
+        db.query('SELECT id FROM `Routine` WHERE routine_name = (?)', [routine_name], (err, results) => {
             // If there's an error, reject this promise
             if (err) {
                 console.log('failed in retrieveAllRoutineId query');
@@ -385,7 +405,6 @@ workout_trackerdb.grabRoutineExerciseName = (body) => {
                          Queries for Routines page
 \*-------------------------------------------------------------------------*/
 
-
 /*--------------------------------------*\
     Select all routine_id from routine
 \*--------------------------------------*/
@@ -460,6 +479,28 @@ workout_trackerdb.findExerciseName = (currentId) => {
             // Otherwise return our results
             return resolve({
                 results
+            });
+        });
+    });
+};
+
+
+/*-------------------------------------------------------------------------*\
+                         Queries for AddWorkout page
+\*-------------------------------------------------------------------------*/
+
+// Insert new row into Workout table
+workout_trackerdb.addWorkout = (routineIDarr, currentExercise) => {
+    return new Promise((resolve, reject) => {
+        db.query('INSERT INTO `RoutineExercise` (routine_id, exercise_id) VALUES (?, ?)', [routineIDarr, currentExercise], (error, result) => {
+            // If there's an error, reject this promise
+            if (error) {
+                console.log('failed in insertIntoRoutineExercise db query')
+                return reject(error);
+            }
+            // Otherwise return our results
+            return resolve({
+                result
             });
         });
     });

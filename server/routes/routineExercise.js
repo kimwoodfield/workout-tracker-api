@@ -9,7 +9,6 @@ const router = express.Router();
 // If a user doesn't have access, return a 403.
 router.get("/", async (req ,res) => {
 
-
 try {
 
     // This will be an array of routine objects we send back to the client that will include routine names, the id and the exercises associated to that routine
@@ -74,12 +73,6 @@ try {
             msg: 'There are no routines!'
         });
     }
-    
-    // If all of the data was inserted correctly, return a 201
-    return res.status(201).json({
-        ok: true,
-        msg: 'Function was successful.'
-    });
 
     } catch (err) {
         console.log(err);

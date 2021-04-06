@@ -12,6 +12,7 @@ const routines = require("./routes/routines");
 const routineExercise = require("./routes/routineExercise");
 const logout = require("./routes/logout");
 const validate = require("./routes/validate");
+const workout = require("./routes/workout");
 const router = require("./routes/login");
 
 
@@ -45,6 +46,7 @@ app.use("/logout", logout);
 app.use("/exercises", exercises);
 app.use("/routines", routines);
 app.use("/routineExercise", routineExercise);
+app.use("/workout", workout);
 
 
 app.listen(process.env.PORT || '3000', () => {
