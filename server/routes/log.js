@@ -7,10 +7,7 @@ const router = express.Router();
 
 // If a user doesn't have access, return a 403.
 router.get("/", (req ,res) => {
-
-    console.log(req.session.userID);
     if (!req.session.userID) {
-        console.log('user doesnt have access');
         return res.status(403).json({
             status: 403,
             msg: 'Forbidden.'
