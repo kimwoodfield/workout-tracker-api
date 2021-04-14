@@ -729,15 +729,15 @@ workout_trackerdb.selectRoutineNameById = (routine_id) => {
 };
 
 // Select all sets where workout_id = workout.id and exercise_id = currentExerciseID
-workout_trackerdb.selectSets = (workout_id, exercise_id) => {
+workout_trackerdb.grabUserWorkouts = (user_id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT sets FROM `WorkoutExercise` WHERE workout_id = ? AND exercise_id = ?",
-      [workout_id, exercise_id],
+      "SELECT workout.id AS workout_id, workout.workout_date, workout.routine_id, routine.routine_name FROM workout INNER JOIN routine ON workout.routine_id = routine.id WHERE workout.user_id = ?",
+      [user_id],
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
-          console.log("failed in selectSets function", err);
+          console.log("failed in grabUserWorkouts function", err);
           return reject(err);
         }
         // Otherwise return our results
@@ -749,16 +749,16 @@ workout_trackerdb.selectSets = (workout_id, exercise_id) => {
   });
 };
 
-// Select all weight where workout_id = workout.id and exercise_id = currentExerciseID
-workout_trackerdb.selectWeight = (workout_id, exercise_id) => {
+// Select all of the details of each exercise belonging to the users workout
+workout_trackerdb.grabUserWorkoutExercises = (workout_id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT weight FROM `WorkoutExercise` WHERE workout_id = ? AND exercise_id = ?",
-      [workout_id, exercise_id],
+      "SELECT workout.id AS workout_id, workoutexercise.id AS exercise_id, exercise.exercise_name, workoutexercise.weight, workoutexercise.reps, workoutexercise.sets FROM ((workout INNER JOIN workoutexercise ON workout.id = workoutexercise.workout_id) INNER JOIN exercise ON workoutexercise.exercise_id = exercise.id) WHERE workout.id = ?",
+      [workout_id],
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
-          console.log("failed in selectWeight function", err);
+          console.log("failed in grabUserWorkoutExercises function", err);
           return reject(err);
         }
         // Otherwise return our results
@@ -769,6 +769,8 @@ workout_trackerdb.selectWeight = (workout_id, exercise_id) => {
     );
   });
 };
+
+
 
 
 
