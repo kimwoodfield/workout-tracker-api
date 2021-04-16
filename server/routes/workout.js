@@ -9,6 +9,13 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   const user_id = req.session.userID.userID; // current userID
 
+  if (user_id == undefined) {
+    return res.status(401).json({
+      ok: false,
+      msg: "Forbidden!",
+    });
+  }
+
   try {
 
     let workouts = [];
@@ -88,5 +95,10 @@ router.post("/", async (req, res) => {
     });
   }
 });
+
+// If the frontend sends a delete request
+router.delete("/", async (req, res) => {
+  console.log('the user sent a delete request');
+})
 
 module.exports = router;
