@@ -673,14 +673,13 @@ workout_trackerdb.insertWorkoutExercises = (currentExercise) => {
         // Otherwise return our results
         return resolve({
           result,
-          thisWorked, 
-          insertedID
+          thisWorked,
+          insertedID,
         });
       }
     );
   });
 };
-
 
 /*-------------------------------------------------------------------------*\
                          Queries for Log page
@@ -742,7 +741,7 @@ workout_trackerdb.grabUserWorkouts = (user_id) => {
         }
         // Otherwise return our results
         return resolve({
-          result
+          result,
         });
       }
     );
@@ -763,16 +762,33 @@ workout_trackerdb.grabUserWorkoutExercises = (workout_id) => {
         }
         // Otherwise return our results
         return resolve({
-          result
+          result,
         });
       }
     );
   });
 };
 
-
-
-
+// Delete workout where user_id and workout_id are provided
+workout_trackerdb.deleteWorkout = (workout_id, user_id) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "DELETE FROM `Workout` WHERE id = ? AND user_id = ?",
+      [workout_id, user_id],
+      (err, result) => {
+        // If there's an error, reject this promise
+        if (err) {
+          console.log("failed in deleteWorkout function", err);
+          return reject(err);
+        }
+        // Otherwise return our results
+        return resolve({
+          result,
+        });
+      }
+    );
+  });
+};
 
 module.exports = {
   getConnection: (callback) => {

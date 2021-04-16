@@ -17,7 +17,6 @@ router.get("/", async (req, res) => {
   }
 
   try {
-
     let workouts = [];
 
     // Grab all of the workouts for the user
@@ -30,7 +29,9 @@ router.get("/", async (req, res) => {
     // Grab the workout data for each workout
     for (let i = 0; i < workouts.length; i++) {
       let workout_id = workouts[i].workout_id;
-      const workoutInfoRaw = await workout_trackerdb.grabUserWorkoutExercises(workout_id);
+      const workoutInfoRaw = await workout_trackerdb.grabUserWorkoutExercises(
+        workout_id
+      );
       const workoutInfo = workoutInfoRaw.result;
       workouts[i].exercises = workoutInfo;
       console.log(workouts[i]);
@@ -39,15 +40,12 @@ router.get("/", async (req, res) => {
     return res.status(201).json({
       workouts,
     });
-
-
   } catch (err) {
     return res.status(500).json({
       ok: false,
       msg: "DB Error!",
     });
   }
-
 });
 
 // If a user attempts to post to this endpoint
@@ -97,8 +95,32 @@ router.post("/", async (req, res) => {
 });
 
 // If the frontend sends a delete request
-router.delete("/", async (req, res) => {
-  console.log('the user sent a delete request');
-})
+router.delete("/:id", async (req, res) => {
+  console.log("the user sent a delete request");
+
+  const workout_idString = req.params.id; // workoutID sent by React
+  const workout_id = parseInt(workout_idString);
+  const userID = req.session.userID.userID; // current userID
+
+  console.log('our workoutID is ', workout_id, ' and our userID is ', userID);
+
+  try {
+
+    let result = await workout_trackerdb.deleteWorkout(workout_id, userID);
+
+    console.log(result);
+
+    return res.status(201).json({
+      msg: 'Workout deleted!'
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      ok: false,
+      msg: "DB Error!",
+    });
+  }
+
+});
 
 module.exports = router;
