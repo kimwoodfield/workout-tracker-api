@@ -14,7 +14,7 @@ const validate = require("./routes/validate");
 const workout = require("./routes/workout");
 const workoutExercise = require("./routes/workoutExercise");
 const currentWorkout = require("./routes/currentWorkout");
-const logger = require("../logger/logger");
+const rateLimit = require("express-rate-limit");
 
 
 // Set sessions
@@ -38,6 +38,18 @@ app.use(cors(
 ));
 
 
+// Limits the requests to API
+const dailyLimit = rateLimit({
+  windowMs: 1000 * 60 * 60 * 24,
+  max: 3000, // Limits each IP to 1000 requests/day
+});
+const userLimit = rateLimit({
+  windowMs: 1000,
+  max: 10, // Limits each user to 10 requests/second 
+});
+app.use(dailyLimit, userLimit);
+
+
 // Handle routes
 app.use("/login", login);
 app.use("/validate", validate);
@@ -50,13 +62,6 @@ app.use("/routineExercise", routineExercise);
 app.use("/workout", workout);
 app.use("/currentWorkout", currentWorkout);
 app.use("/workoutExercise", workoutExercise);
-
-
-// Test logger
-// logger.info('text info');
-// logger.warn('text warn');
-// logger.error('text error');
-// logger.debug('text debug');
 
 
 app.listen(process.env.PORT || '3000', () => {
