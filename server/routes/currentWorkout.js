@@ -1,5 +1,6 @@
 const express = require("express");
 const { workout_trackerdb } = require("../db");
+const logger = require("../../logger/logger");
 
 // Creates new instance of router
 const router = express.Router();
@@ -7,6 +8,10 @@ const router = express.Router();
 // Dynamic POST route
 router.post("/:id", async (req, res) => {
   console.log("Made it inside post route");
+
+  // Store IP from Req obj and UserType for logging
+  let ip = req.ip;
+  let userType = req.session.userType.userRole;
 
   const workout_idString = req.params.id; // workoutID sent by React
   const workout_id = parseInt(workout_idString);
@@ -105,6 +110,8 @@ router.post("/:id", async (req, res) => {
     }
     console.log("the last insertedID was ... ", lastInsertedId);
 
+    logger.info(`Successfully created a workout for the current user. The user is logged in as userType: ${userType} from IP address: ${ip}`);
+
     if (lastInsertedId > 0) {
       return res.status(201).json({
         ok: true,
@@ -112,6 +119,7 @@ router.post("/:id", async (req, res) => {
       });
     }
   } catch (err) {
+    logger.info(`The user was unable to create a workout. The user is logged in as userType: ${userType} from IP address: ${ip}`);
     return res.status(500).json({
       ok: false,
       msg: "DB Error!",
@@ -123,6 +131,10 @@ router.post("/:id", async (req, res) => {
 router.get("/:id", async (req, res) => {
   // console.log('the unqiue incoming url hit req params ', req.params);
   const workout_id = req.params.id; // our workout_id
+
+  // Store IP from Req obj and UserType for logging
+  let ip = req.ip;
+  let userType = req.session.userType.userRole;
 
   try {
     let currentWorkout = {
@@ -170,11 +182,13 @@ router.get("/:id", async (req, res) => {
 
     // console.log('We did our exerciseName loop and our collection is ... ', exerciseNameResults);
 
+    logger.info(`Successfully collected the data for the user to create their workout. The user is logged in as userType: ${userType} from IP address: ${ip}`);
+
     return res.status(201).json({
       currentWorkout,
     });
   } catch (err) {
-    // do this
+    logger.info(`The user was unable to retrieve the data needed to create their workout. The user is logged in as userType: ${userType} from IP address: ${ip}`);
     // console.log('Error', err);
     return res.status(500).json({
       ok: false,

@@ -1,15 +1,23 @@
 const express = require("express");
 const login = require("./login");
 const { workout_trackerdb } = require("../db");
+const logger = require("../../logger/logger");
 
 // Creates new instance of router
 const router = express.Router();
 
 // If a user doesn't have access, return a 403.
 router.get("/", async (req, res) => {
+
+  // Store IP from Req obj and UserType for logging
+  let ip = req.ip;
+  let userType = req.session.userType.userRole;
+
+  // Store the current user's id
   const user_id = req.session.userID.userID; // current userID
 
   if (user_id == undefined) {
+    logger.info(`Validation was unsuccessful. Attempted access from an unauthorized user located at IP address: ${ip}`);
     return res.status(401).json({
       ok: false,
       msg: "Forbidden!",
@@ -37,10 +45,13 @@ router.get("/", async (req, res) => {
       console.log(workouts[i]);
     }
 
+    logger.info(`Successfully retrieved the workouts for the current user. The user is logged in as userType: ${userType} from IP address: ${ip}`);
+
     return res.status(201).json({
       workouts,
     });
   } catch (err) {
+    logger.info(`Could not retrieve the workouts for the current user. The user is logged in as userType: ${userType} from IP address: ${ip}`);
     return res.status(500).json({
       ok: false,
       msg: "DB Error!",
@@ -57,6 +68,10 @@ router.post("/", async (req, res) => {
 
   // Save the userID
   const userID = letCollectedUserID.userID;
+
+  // Store IP from Req obj and UserType for logging
+  let ip = req.ip;
+  let userType = req.session.userType.userRole;
 
   // Save the time
   let currentDate = new Date().toLocaleString();
@@ -81,11 +96,14 @@ router.post("/", async (req, res) => {
     ); // Working.
     const currentWorkoutID = addWorkout_result.lastInsertedId;
 
+    logger.info(`The user successfully created a new workout. The user is logged in as userType: ${userType} from IP address: ${ip}`);
+
     // If all of the data was inserted correctly, return a 201
     return res.status(201).json({
       currentWorkoutID,
     });
   } catch (err) {
+    logger.info(`The user failed to create a new workout. The user is logged in as userType: ${userType} from IP address: ${ip}`);
     console.log(err);
     return res.status(500).json({
       ok: false,
@@ -97,6 +115,10 @@ router.post("/", async (req, res) => {
 // If the frontend sends a delete request
 router.delete("/:id", async (req, res) => {
   console.log("the user sent a delete request");
+
+  // Store IP from Req obj and UserType for logging
+  let ip = req.ip;
+  let userType = req.session.userType.userRole;
 
   const workout_idString = req.params.id; // workoutID sent by React
   const workout_id = parseInt(workout_idString);
@@ -110,11 +132,14 @@ router.delete("/:id", async (req, res) => {
 
     console.log(result);
 
+    logger.info(`The user successfully deleted a workout. The user is logged in as userType: ${userType} from IP address: ${ip}`);
+
     return res.status(201).json({
       msg: 'Workout deleted!'
     });
 
   } catch (err) {
+    logger.info(`The user failed to delete a workout. The user is logged in as userType: ${userType} from IP address: ${ip}`);
     return res.status(500).json({
       ok: false,
       msg: "DB Error!",

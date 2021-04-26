@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
-const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 const login = require('./routes/login');
@@ -15,7 +14,7 @@ const validate = require("./routes/validate");
 const workout = require("./routes/workout");
 const workoutExercise = require("./routes/workoutExercise");
 const currentWorkout = require("./routes/currentWorkout");
-const router = require("./routes/login");
+const logger = require("../logger/logger");
 
 
 // Set sessions
@@ -51,6 +50,13 @@ app.use("/routineExercise", routineExercise);
 app.use("/workout", workout);
 app.use("/currentWorkout", currentWorkout);
 app.use("/workoutExercise", workoutExercise);
+
+
+// Test logger
+// logger.info('text info');
+// logger.warn('text warn');
+// logger.error('text error');
+// logger.debug('text debug');
 
 
 app.listen(process.env.PORT || '3000', () => {

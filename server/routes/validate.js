@@ -9,8 +9,13 @@ const router = express.Router();
 // If a user doesn't have access, return a 403.
 router.get("/", (req ,res) => {
 
+    // Store IP from Req obj and UserType for logging
+    let ip = req.ip;
+    let userType = req.session.userType.userRole;
+
     console.log(req.session.userID);
     if (!req.session.userID) {
+        logger.info(`Validation was unsuccessful. Attempted access from an unauthorized user located at IP address: ${ip}`);
         console.log('user doesnt have access');
         return res.status(403).json({
             status: 403,
@@ -18,7 +23,7 @@ router.get("/", (req ,res) => {
         });
     }
     else {
-        console.log('user has access');
+        logger.info(`Successfully validated the user. The user is logged in as userType: ${userType} from IP address: ${ip}`);
         return res.status(200).json({
             status: 200,
             msg: 'User allowed'

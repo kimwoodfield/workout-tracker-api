@@ -2,13 +2,17 @@ const express = require('express');
 const db = require('../db');
 const login = require('./login');
 const {workout_trackerdb, getConnection} = require("../db");
-
+const logger = require("../../logger/logger");
 
 // Creates new instance of router
 const router = express.Router();
 
 
 router.get("/", async (req ,res) => {
+
+    // Store IP from Req obj and UserType for logging
+    let ip = req.ip;
+    let userType = req.session.userType.userRole;
 
     let exercises = await workout_trackerdb.showAllExercises();
     console.log(exercises);
@@ -18,6 +22,7 @@ router.get("/", async (req ,res) => {
 
     console.log(req.session.userID);
     if (!req.session.userID) {
+        logger.info(`Validation was unsuccessful. Attempted access from an unauthorized user located at IP address: ${ip}`);
         console.log('user doesnt have access');
         return res.status(403).json({
             status: 403,
@@ -25,6 +30,7 @@ router.get("/", async (req ,res) => {
         });
     }
     else {
+        logger.info(`Successfully retrieved the exercises for the current user. The user is logged in as userType: ${userType} from IP address: ${ip}`);
         console.log('Data was returned');
         return res.status(200).json({
             exercisesResults
@@ -35,6 +41,10 @@ router.get("/", async (req ,res) => {
 
 
 router.post("/", async (req ,res) => {
+
+    // Store IP from Req obj and UserType for logging
+    let ip = req.ip;
+    let userType = req.session.userType.userRole;
 
     console.log('We made it into the addexercise route');
 
@@ -54,6 +64,7 @@ router.post("/", async (req ,res) => {
         
         // If exercisesFound.total is higher than 0, it means the exercise_name already exists in the database.
         if (exercisesFound.total) {
+            logger.info(`User was unable to create an exercise because it already exists. The user is logged in as userType: ${userType} from IP address: ${ip}`);
             return res.status(409).json({
               ok: false,
               msg: 'That exercise already exists'
@@ -63,6 +74,8 @@ router.post("/", async (req ,res) => {
         // Insert the exercise
         await workout_trackerdb.insertExercise(body, userID);
 
+        logger.info(`The user successfully added a new exercise! The user is logged in as userType: ${userType} from IP address: ${ip}`);
+
         // If all of the data was inserted correctly, return a 201
         return res.status(201).json({
             ok: true,
@@ -70,6 +83,7 @@ router.post("/", async (req ,res) => {
         });
 
     } catch (err) {
+        logger.info(`The user was unsuccessful and unable to add a new exercise to the system. The user is logged in as userType: ${userType} from IP address: ${ip}`);
         return res.status(500).json({
             ok: false,
             msg: 'DB Error!'

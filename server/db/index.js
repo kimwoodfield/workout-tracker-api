@@ -1,5 +1,7 @@
 const mysql = require("mysql");
+const logger = require("../../logger/logger");
 require("dotenv").config();
+
 
 // Create connection pool to query db
 const db = mysql.createPool({
@@ -18,6 +20,7 @@ workout_trackerdb.all = () => {
     db.query("SELECT * FROM `User`", (err, results) => {
       // If there's an error, reject this promise
       if (err) {
+        logger.error(`An error occured in the workout_trackerdb.all function. Error was: ${err}`);
         return reject(err);
       }
       // Otherwise return our results
@@ -36,6 +39,7 @@ workout_trackerdb.findEmailInBody = (body) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findEmailInBody function. Error was: ${err}`);
           console.log("failed in check user function");
           return reject(err);
         }
@@ -63,6 +67,7 @@ workout_trackerdb.createUserInDB = (body) => {
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.createUserInDB function. Error was: ${err}`);
           console.log("failed in check user function");
           return reject(err);
         }
@@ -86,6 +91,7 @@ workout_trackerdb.findUserInBody = (body) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findUserInBody function. Error was: ${err}`);
           console.log(err);
           console.log("failed in check user function");
           return reject(err);
@@ -110,6 +116,7 @@ workout_trackerdb.findPassInBody = (body) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findPassInBody function. Error was: ${err}`);
           console.log("failed in check user function");
           return reject(err);
         }
@@ -134,6 +141,7 @@ workout_trackerdb.loginDetailsMatch = (body) => {
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.loginDetailsMatch function. Error was: ${err}`);
           console.log("failed in check user function");
           return reject(err);
         }
@@ -159,6 +167,7 @@ workout_trackerdb.findUserID = (body) => {
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findUserID function. Error was: ${err}`);
           console.log("failed in check user function");
           return reject(err);
         }
@@ -168,6 +177,34 @@ workout_trackerdb.findUserID = (body) => {
         // Then return the userID with the new id
         return resolve({
           userID,
+        });
+      }
+    );
+  });
+};
+
+// Function that finds the User Role of the person logging in
+workout_trackerdb.findUserRole = (body) => {
+  return new Promise((resolve, reject) => {
+    const username = body.username;
+    const password = body.password;
+    let userRole;
+    db.query(
+      "SELECT `role` FROM `user` WHERE `username` = ? and `password` = ?",
+      [username, password],
+      (err, result) => {
+        // If there's an error, reject this promise
+        if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findUserRole function. Error was: ${err}`);
+          console.log("failed in check user function");
+          return reject(err);
+        }
+        // Otherwise update the userID variable we created with the id of the user that logged in
+        // console.log(result[0].id);
+        userRole = result[0].role;
+        // Then return the userID with the new id
+        return resolve({
+          userRole,
         });
       }
     );
@@ -185,6 +222,7 @@ workout_trackerdb.showAllExercises = (body) => {
         console.log("Made it inside the showAllExercises query");
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.showAllExercises function. Error was: ${err}`);
           console.log("failed in check user function");
           console.log(err);
           return reject(err);
@@ -208,6 +246,7 @@ workout_trackerdb.doesExerciseExist = (body) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.doesExerciseExist function. Error was: ${err}`);
           console.log("failed in doesExerciseExist query");
           return reject(err);
         }
@@ -237,6 +276,7 @@ workout_trackerdb.insertExercise = (body) => {
       (error, result) => {
         // If there's an error, reject this promise
         if (error) {
+          logger.error(`An error occured in the workout_trackerdb.insertExercise function. Error was: ${err}`);
           console.log("failed in insert exercise db query");
           return reject(error);
         }
@@ -260,6 +300,7 @@ workout_trackerdb.retrieveExerciseId = (currentExercise) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.retrieveExerciseId function. Error was: ${err}`);
           console.log("failed in retrieveRoutineId query");
           return reject(err);
         }
@@ -289,6 +330,7 @@ workout_trackerdb.insertRoutineName = (body) => {
       (error, result) => {
         // If there's an error, reject this promise
         if (error) {
+          logger.error(`An error occured in the workout_trackerdb.insertRoutineName function. Error was: ${err}`);
           console.log("failed in insertRoutineName db query");
           return reject(error);
         }
@@ -313,6 +355,7 @@ workout_trackerdb.retrieveRoutineId = (routineName) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.retrieveRoutineId function. Error was: ${err}`);
           console.log("failed in retrieveRoutineId query");
           return reject(err);
         }
@@ -337,6 +380,7 @@ workout_trackerdb.retrieveRoutineId = (routineName) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.retrieveRoutineId function. Error was: ${err}`);
           console.log("failed in retrieveRoutineId query");
           return reject(err);
         }
@@ -360,6 +404,7 @@ workout_trackerdb.findRoutineIdByName = (routine_name) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findRoutineIdByName function. Error was: ${err}`);
           console.log("failed in retrieveAllRoutineId query");
           return reject(err);
         }
@@ -386,6 +431,7 @@ workout_trackerdb.insertIntoRoutineExercise = (
       (error, result) => {
         // If there's an error, reject this promise
         if (error) {
+          logger.error(`An error occured in the workout_trackerdb.insertIntoRoutineExercise function. Error was: ${err}`);
           console.log("failed in insertIntoRoutineExercise db query");
           return reject(error);
         }
@@ -408,6 +454,7 @@ workout_trackerdb.showAllRoutines = (body) => {
       console.log("Made it inside the showAllRoutines query");
       // If there's an error, reject this promise
       if (err) {
+        logger.error(`An error occured in the workout_trackerdb.showAllRoutines function. Error was: ${err}`);
         console.log("failed in showAllRoutines function");
         return reject(err);
       }
@@ -432,6 +479,7 @@ workout_trackerdb.grabRoutineExerciseName = (body) => {
         console.log("Made it inside the grabRoutineExerciseName query");
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.grabRoutineExerciseName function. Error was: ${err}`);
           console.log("failed in grabRoutineExerciseName function");
           console.log(err);
           return reject(err);
@@ -457,6 +505,7 @@ workout_trackerdb.selectAllRoutineId = () => {
     db.query("SELECT id FROM Routine", [], (err, results) => {
       // If there's an error, reject this promise
       if (err) {
+        logger.error(`An error occured in the workout_trackerdb.selectAllRoutineId function. Error was: ${err}`);
         console.log("failed in selectAllRoutineId query");
         return reject(err);
       }
@@ -479,6 +528,7 @@ workout_trackerdb.findRoutineName = (currentRoutineId) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findRoutineName function. Error was: ${err}`);
           console.log("failed in retrieveAllRoutineId query");
           return reject(err);
         }
@@ -502,6 +552,7 @@ workout_trackerdb.findExerciseIds = (currentRoutineId) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findExerciseIds function. Error was: ${err}`);
           console.log("failed in retrieveAllRoutineId query");
           return reject(err);
         }
@@ -525,6 +576,7 @@ workout_trackerdb.findExerciseName = (currentId) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findExerciseName function. Error was: ${err}`);
           console.log("failed in findExerciseName query", err);
           return reject(err);
         }
@@ -550,6 +602,7 @@ workout_trackerdb.addWorkout = (routineID, userID) => {
       (error, result) => {
         // If there's an error, reject this promise
         if (error) {
+          logger.error(`An error occured in the workout_trackerdb.addWorkout function. Error was: ${err}`);
           console.log("failed in addWorkout db query because ", error);
           return reject(error);
         }
@@ -573,6 +626,7 @@ workout_trackerdb.findRoutineIdFromWorkouts = (workout_id) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findRoutineIdFromWorkouts function. Error was: ${err}`);
           console.log("failed in findRoutineIdFromWorkouts query", err);
           return reject(err);
         }
@@ -594,6 +648,7 @@ workout_trackerdb.findRoutineNameFromRoutineId = (workout_id) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findRoutineNameFromRoutineId function. Error was: ${err}`);
           console.log("failed in findRoutineIdFromWorkouts query", err);
           return reject(err);
         }
@@ -615,6 +670,7 @@ workout_trackerdb.findExerciseIdUsingRoutineId = (routine_id) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findExerciseIdUsingRoutineId function. Error was: ${err}`);
           console.log("failed in findExerciseIdUsingRoutineId query", err);
           return reject(err);
         }
@@ -636,6 +692,7 @@ workout_trackerdb.findRoutineIdByWorkoutId = (workout_id) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findRoutineIdByWorkoutId function. Error was: ${err}`);
           console.log("failed in findRoutineIdFromWorkouts query", err);
           return reject(err);
         }
@@ -660,6 +717,7 @@ workout_trackerdb.insertWorkoutExercises = (currentExercise) => {
       (error, result) => {
         // If there's an error, reject this promise
         if (error) {
+          logger.error(`An error occured in the workout_trackerdb.insertWorkoutExercises function. Error was: ${error}`);
           console.log(
             "failed in insertWorkoutExercises db query because ",
             error
@@ -694,6 +752,7 @@ workout_trackerdb.findWorkoutIdsByUserId = (user_id) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findWorkoutIdsByUserId function. Error was: ${err}`);
           console.log("failed in findWorkoutIdsByUserId query", err);
           return reject(err);
         }
@@ -715,6 +774,7 @@ workout_trackerdb.selectRoutineNameById = (routine_id) => {
       (err, results) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.selectRoutineNameById function. Error was: ${err}`);
           console.log("failed in findExerciseIdUsingRoutineId query", err);
           return reject(err);
         }
@@ -736,6 +796,7 @@ workout_trackerdb.grabUserWorkouts = (user_id) => {
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.grabUserWorkouts function. Error was: ${err}`);
           console.log("failed in grabUserWorkouts function", err);
           return reject(err);
         }
@@ -757,6 +818,7 @@ workout_trackerdb.grabUserWorkoutExercises = (workout_id) => {
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.grabUserWorkoutExercises function. Error was: ${err}`);
           console.log("failed in grabUserWorkoutExercises function", err);
           return reject(err);
         }
@@ -778,6 +840,7 @@ workout_trackerdb.deleteWorkout = (workout_id, user_id) => {
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
+          logger.error(`An error occured in the workout_trackerdb.deleteWorkout function. Error was: ${err}`);
           console.log("failed in deleteWorkout function", err);
           return reject(err);
         }

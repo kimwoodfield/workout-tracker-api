@@ -2,12 +2,18 @@ const express = require("express");
 const db = require("../db");
 const login = require("./login");
 const { workout_trackerdb, getConnection } = require("../db");
+const logger = require("../../logger/logger");
 
 // Creates new instance of router
 const router = express.Router();
 
 // If a user doesn't have access, return a 403.
 router.get("/", async (req, res) => {
+
+  // Store IP from Req obj and UserType for logging
+  let ip = req.ip;
+  let userType = req.session.userType.userRole;
+
   let routines = await workout_trackerdb.showAllRoutines();
   console.log(routines);
 
@@ -16,12 +22,14 @@ router.get("/", async (req, res) => {
 
   console.log(req.session.userID);
   if (!req.session.userID) {
+    logger.info(`Validation was unsuccessful. Attempted access from an unauthorized user located at IP address: ${ip}`);
     console.log("user doesnt have access");
     return res.status(403).json({
       status: 403,
       msg: "Forbidden.",
     });
   } else {
+    logger.info(`Successfully validated the user and the current routines were retrieved for the current user. The user is logged in as userType: ${userType} from IP address: ${ip}`);
     console.log("Data was returned");
     return res.status(200).json({
       routinesResults,
@@ -31,6 +39,11 @@ router.get("/", async (req, res) => {
 
 // If a user accesses this route, send their routine to the database.
 router.post("/", async (req, res) => {
+
+  // Store IP from Req obj and UserType for logging
+  let ip = req.ip;
+  let userType = req.session.userType.userRole;
+
   const body = req.body; // username and password sent by React
   console.log("We received the body!", body);
 
@@ -114,12 +127,15 @@ router.post("/", async (req, res) => {
     }
     console.log("RoutineExercise rows added!");
 
+    logger.info(`The current user successfully created a routine! The user is logged in as userType: ${userType} from IP address: ${ip}`);
+
     // If all of the data was inserted correctly, return a 201
     return res.status(201).json({
       ok: true,
       msg: "Routine added!",
     });
   } catch (err) {
+    logger.info(`The current user unsuccessful when attempting to create a routine. The user is logged in as userType: ${userType} from IP address: ${ip}`);
     console.log(err);
     return res.status(500).json({
       ok: false,

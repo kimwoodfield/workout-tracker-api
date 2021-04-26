@@ -2,12 +2,17 @@ const express = require('express');
 const db = require('../db');
 const login = require('./login');
 const {workout_trackerdb, getConnection} = require("../db");
+const logger = require("../../logger/logger");
 
 // Creates new instance of router
 const router = express.Router();
 
 // If a user doesn't have access, return a 403.
 router.get("/", async (req ,res) => {
+
+    // Store IP from Req obj and UserType for logging
+    let ip = req.ip;
+    let userType = req.session.userType.userRole;
 
 try {
 
@@ -64,10 +69,12 @@ try {
     }
 
     if (routineList.length > 0) {
+        logger.info(`The user was successful in retrieving routine names, the id and exercises associated with the routine. The user is logged in as userType: ${userType} from IP address: ${ip}`);
         return res.status(201).json({
             routineList
         });
     } else {
+        logger.info(`The user was successful in retrieving routine names, the id and exercises associated with the routine but there were no routines to display. The user is logged in as userType: ${userType} from IP address: ${ip}`);
         return res.status(201).json({
             ok: true,
             msg: 'There are no routines!'
@@ -75,6 +82,7 @@ try {
     }
 
     } catch (err) {
+        logger.info(`The user was unsuccessful in retrieving routine names, the id and exercises associated with the routine. The user is logged in as userType: ${userType} from IP address: ${ip}`);
         console.log(err);
         return res.status(500).json({
             ok: false,
