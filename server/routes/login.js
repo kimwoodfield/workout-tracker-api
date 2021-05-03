@@ -72,10 +72,9 @@ router.post(
 
     // Make sure inputs are not empty when they are sent
     try {
-      // Wait here while we check if there is a user in the database that matches this username
-      const userFound = await workout_trackerdb.findUserInBody(body);
+      
 
-      // Now, if there were no users found, return a 401 to the frontend.
+      const userFound = await workout_trackerdb.findUserInBody(body);
       if (!userFound.total) {
         logger.info(`The user failed to login from IP address: ${ip}.`);
         return res.status(401).json({
@@ -85,9 +84,11 @@ router.post(
           msg: `Sorry - this user doesn't exist!`,
         });
       }
+      console.log('userFound is ', userFound);
+      let retrievedPass = userFound.results[0].password;
 
       // Wait here while we check if there is a user in the database that matches this password
-      const passFound = await workout_trackerdb.findPassInBody(body);
+      const passFound = await workout_trackerdb.findPassInBody(body, retrievedPass);
 
       // If no users were found with this password, return a 401.
       if (!passFound.total) {
@@ -125,6 +126,7 @@ router.post(
         msg: "Login successful!",
       });
     } catch (err) {
+      console.log(err);
       logger.info(`The user failed to login from IP address: ${ip}.`);
       // do this
       // console.log('Error', err);

@@ -1,6 +1,8 @@
 const mysql = require("mysql");
 const logger = require("../../logger/logger");
 require("dotenv").config();
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 
 // Create connection pool to query db
@@ -13,6 +15,8 @@ const db = mysql.createPool({
 });
 
 let workout_trackerdb = {};
+
+let pass;
 
 // Function that returns all users in the database
 workout_trackerdb.all = () => {
@@ -61,23 +65,28 @@ workout_trackerdb.createUserInDB = (body) => {
     const username = body.username;
     const password = body.password;
     const role = "General";
-    db.query(
-      "INSERT INTO User (email, full_name, username, password, role) VALUES (?, ?, ?, ?, ?)",
-      [email, fullname, username, password, role],
-      (err, result) => {
-        // If there's an error, reject this promise
-        if (err) {
-          logger.error(`An error occured in the workout_trackerdb.createUserInDB function. Error was: ${err}`);
-          console.log("failed in check user function");
-          return reject(err);
-        }
-        // Otherwise return our results
-        return resolve({
-          total: result.length,
-          result,
-        });
-      }
-    );
+    bcrypt.genSalt(saltRounds, function(err, salt) {
+      bcrypt.hash(password, salt, function(err, hash) {
+        pass = hash;
+        db.query(
+          "INSERT INTO User (email, full_name, username, password, role) VALUES (?, ?, ?, ?, ?)",
+          [email, fullname, username, pass, role],
+          (err, result) => {
+            // If there's an error, reject this promise
+            if (err) {
+              logger.error(`An error occured in the workout_trackerdb.createUserInDB function. Error was: ${err}`);
+              console.log("failed in check user function");
+              return reject(err);
+            }
+            // Otherwise return our results
+            return resolve({
+              total: result.length,
+              result,
+            });
+          }
+        );
+      });
+  });
   });
 };
 
@@ -107,9 +116,15 @@ workout_trackerdb.findUserInBody = (body) => {
 };
 
 // Function that checks if a user exists with the PASSWORD used
-workout_trackerdb.findPassInBody = (body) => {
+workout_trackerdb.findPassInBody = (body, retrievedPass) => {
   return new Promise((resolve, reject) => {
-    const password = body.password;
+    let password = body.password;
+    let passwordsMatch = bcrypt.compareSync(password, retrievedPass);
+    if (passwordsMatch === false) {
+      console.log('Passwords do not match.');
+    } else {
+      password = retrievedPass;
+    }
     db.query(
       "SELECT * FROM `User` WHERE password = ?",
       [password],
@@ -117,10 +132,11 @@ workout_trackerdb.findPassInBody = (body) => {
         // If there's an error, reject this promise
         if (err) {
           logger.error(`An error occured in the workout_trackerdb.findPassInBody function. Error was: ${err}`);
-          console.log("failed in check user function");
+          console.log("failed in check user function", err);
           return reject(err);
         }
         // Otherwise return our results
+        console.log('made it through this function');
         return resolve({
           total: results.length,
           results,
@@ -159,11 +175,10 @@ workout_trackerdb.loginDetailsMatch = (body) => {
 workout_trackerdb.findUserID = (body) => {
   return new Promise((resolve, reject) => {
     const username = body.username;
-    const password = body.password;
     let userID;
     db.query(
-      "SELECT `id` FROM `user` WHERE `username` = ? and `password` = ?",
-      [username, password],
+      "SELECT `id` FROM `user` WHERE `username` = ?",
+      [username],
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
@@ -187,11 +202,10 @@ workout_trackerdb.findUserID = (body) => {
 workout_trackerdb.findUserRole = (body) => {
   return new Promise((resolve, reject) => {
     const username = body.username;
-    const password = body.password;
     let userRole;
     db.query(
-      "SELECT `role` FROM `user` WHERE `username` = ? and `password` = ?",
-      [username, password],
+      "SELECT `role` FROM `user` WHERE `username` = ?",
+      [username],
       (err, result) => {
         // If there's an error, reject this promise
         if (err) {
