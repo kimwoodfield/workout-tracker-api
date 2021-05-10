@@ -10,7 +10,7 @@ const exercises = require("./routes/exercises");
 const routines = require("./routes/routines");
 const routineExercise = require("./routes/routineExercise");
 const logout = require("./routes/logout");
-const admin = require("./routes/admin");
+const isAdmin = require("./routes/isAdmin");
 const workout = require("./routes/workout");
 const workoutExercise = require("./routes/workoutExercise");
 const currentWorkout = require("./routes/currentWorkout");
@@ -48,7 +48,7 @@ app.use(dailyLimit, userLimit);
 
 // Handle routes
 app.use("/login", login);
-app.use("/admin", admin);
+app.use("/isAdmin", isAdmin);
 app.use("/register", register);
 app.use("/log", log);
 app.use("/logout", logout);

@@ -7,7 +7,7 @@ const logger = require("../../logger/logger");
 // Creates new instance of router
 const router = express.Router();
 
-// If a user doesn't have access, return a 403.
+// Here we check what userType is set on the Session. If the userType is undefined, it means that the user attempted to access the route without creating an account first. If a user attempts to access the route with a userType of "General" then they are considered unauthorized to access the admin panel and a 403 response code is returned to the client as a result.
 router.get("/", (req, res) => {
   // Store IP from Req obj and UserType for logging
   let ip = req.ip;
