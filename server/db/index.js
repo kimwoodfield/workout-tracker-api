@@ -33,6 +33,20 @@ workout_trackerdb.all = () => {
   });
 };
 
+workout_trackerdb.allUsers = () => {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT id, full_name, username, role FROM `User`", (err, results) => {
+      // If there's an error, reject this promise
+      if (err) {
+        logger.error(`An error occured in the workout_trackerdb.all function. Error was: ${err}`);
+        return reject(err);
+      }
+      // Otherwise return our results
+      return resolve(results);
+    });
+  });
+};
+
 // Function that checks if a user exists with the email used
 workout_trackerdb.findEmailInBody = (body) => {
   return new Promise((resolve, reject) => {
@@ -101,6 +115,106 @@ workout_trackerdb.findUserInBody = (body) => {
         // If there's an error, reject this promise
         if (err) {
           logger.error(`An error occured in the workout_trackerdb.findUserInBody function. Error was: ${err}`);
+          console.log(err);
+          console.log("failed in check user function");
+          return reject(err);
+        }
+        // Otherwise return our results
+        return resolve({
+          total: results.length,
+          results,
+        });
+      }
+    );
+  });
+};
+
+// Function that deletes a user via their username
+workout_trackerdb.deleteUser = (username) => {
+  return new Promise((resolve, reject) => {
+    console.log(username);
+    db.query(
+      "DELETE FROM `User` WHERE username = ?",
+      [username],
+      (err, results) => {
+        // If there's an error, reject this promise
+        if (err) {
+          logger.error(`An error occured in the workout_trackerdb.findUserInBody function. Error was: ${err}`);
+          console.log(err);
+          console.log("failed in check user function");
+          return reject(err);
+        }
+        // Otherwise return our results
+        return resolve({
+          total: results.length,
+          results,
+        });
+      }
+    );
+  });
+};
+
+// Check user role
+workout_trackerdb.checkRole = (username) => {
+  return new Promise((resolve, reject) => {
+    console.log(username);
+    db.query(
+      "SELECT `role` FROM `User` WHERE username = ?",
+      [username],
+      (err, results) => {
+        // If there's an error, reject this promise
+        if (err) {
+          logger.error(`An error occured in the workout_trackerdb.checkRole function. Error was: ${err}`);
+          console.log(err);
+          console.log("failed in check user function");
+          return reject(err);
+        }
+        // Otherwise return our results
+        return resolve({
+          total: results.length,
+          results,
+        });
+      }
+    );
+  });
+};
+
+// Promote a user
+workout_trackerdb.promoteUser = (username) => {
+  return new Promise((resolve, reject) => {
+    console.log(username);
+    db.query(
+      "UPDATE `User` SET `role`='Admin' WHERE `username` = ?",
+      [username],
+      (err, results) => {
+        // If there's an error, reject this promise
+        if (err) {
+          logger.error(`An error occured in the workout_trackerdb.promoteUser function. Error was: ${err}`);
+          console.log(err);
+          console.log("failed in check user function");
+          return reject(err);
+        }
+        // Otherwise return our results
+        return resolve({
+          total: results.length,
+          results,
+        });
+      }
+    );
+  });
+};
+
+// Demote a user
+workout_trackerdb.demoteUser = (username) => {
+  return new Promise((resolve, reject) => {
+    console.log(username);
+    db.query(
+      "UPDATE `User` SET `role`='General' WHERE `username` = ?",
+      [username],
+      (err, results) => {
+        // If there's an error, reject this promise
+        if (err) {
+          logger.error(`An error occured in the workout_trackerdb.demoteUser function. Error was: ${err}`);
           console.log(err);
           console.log("failed in check user function");
           return reject(err);

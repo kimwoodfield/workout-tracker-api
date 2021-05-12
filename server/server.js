@@ -10,6 +10,7 @@ const exercises = require("./routes/exercises");
 const routines = require("./routes/routines");
 const routineExercise = require("./routes/routineExercise");
 const logout = require("./routes/logout");
+const users = require("./routes/users");
 const isAdmin = require("./routes/isAdmin");
 const workout = require("./routes/workout");
 const workoutExercise = require("./routes/workoutExercise");
@@ -58,6 +59,7 @@ app.use("/routineExercise", routineExercise);
 app.use("/workout", workout);
 app.use("/currentWorkout", currentWorkout);
 app.use("/workoutExercise", workoutExercise);
+app.use("/users", users);
 
 app.listen(process.env.PORT || "3000", () => {
   console.log(`Server is running on port: ${process.env.PORT || port}`);
