@@ -16,24 +16,33 @@ router.get("/", (req, res) => {
 // Handles POST requests made to /login
 router.post(
   "/",
-  body("username").not().isEmpty(),
-  body("password").not().isEmpty(),
+  body("username").isLength({ min: 5 }),
+  body("password").isLength({ min: 5 }),
   async (req, res) => {
+
+    console.log('body is ', body);
+    console.log('req body is ', req.body);
+    // Username & password sent by React
+    let formData = req.body;
 
     // Store IP on Req obj for logging
     let ip = req.ip;
 
-    const body = req.body; // username and password sent by React
+    console.log('our formData is ', formData);
 
     const errors = validationResult(req);
 
+    console.log('errors thing is ', errors);
+
     if (!errors.isEmpty()) {
+      console.log('the first if statement in login route');
       console.log(errors);
       return res.status(400).json({ errors: errors.array() });
     }
 
     // Username check
-    if (body.username === "") {
+    if (formData.username === "") {
+      console.log('the second if statement in login route');
       logger.info(`The user failed to login from IP address: ${ip}.`);
       return res.status(401).json({
         status: 401,
@@ -41,7 +50,8 @@ router.post(
         issue: "Username",
         msg: "You must enter a username.",
       });
-    } else if (body.username.length < 5) {
+    } else if (formData.username.length < 5) {
+      console.log('the third if statement in login route');
       logger.info(`The user failed to login from IP address: ${ip}.`);
       return res.status(401).json({
         status: 401,
@@ -52,7 +62,8 @@ router.post(
     }
 
     // Password check
-    if (body.password === "") {
+    if (formData.password === "") {
+      console.log('the fourth if statement in login route');
       logger.info(`The user failed to login from IP address: ${ip}.`);
       return res.status(401).json({
         status: 401,
@@ -60,7 +71,8 @@ router.post(
         issue: "Password",
         msg: "You must enter a password.",
       });
-    } else if (body.password.length < 4) {
+    } else if (formData.password.length < 4) {
+      console.log('the fifth if statement in login route');
       logger.info(`The user failed to login from IP address: ${ip}.`);
       return res.status(401).json({
         status: 401,
@@ -73,9 +85,11 @@ router.post(
     // Make sure inputs are not empty when they are sent
     try {
       
+      console.log('made it inside the try block in login route');
 
-      const userFound = await workout_trackerdb.findUserInBody(body);
+      const userFound = await workout_trackerdb.findUserInBody(formData);
       if (!userFound.total) {
+        console.log('the first if statement in try block');
         logger.info(`The user failed to login from IP address: ${ip}.`);
         return res.status(401).json({
           status: 401,
@@ -88,10 +102,11 @@ router.post(
       let retrievedPass = userFound.results[0].password;
 
       // Wait here while we check if there is a user in the database that matches this password
-      const passFound = await workout_trackerdb.findPassInBody(body, retrievedPass);
+      const passFound = await workout_trackerdb.findPassInBody(formData, retrievedPass);
 
       // If no users were found with this password, return a 401.
       if (!passFound.total) {
+        console.log('second if statement in try block');
         logger.info(`The user failed to login from IP address: ${ip}.`);
         // Will run if users.total is less than 0, which means nothing was found in the DB
         return res.status(401).json({
@@ -103,16 +118,16 @@ router.post(
       }
 
       // Wait here to see if the login details match what we have stored in the database
-      await workout_trackerdb.loginDetailsMatch(body);
+      await workout_trackerdb.loginDetailsMatch(formData);
 
       // The session variable on the request object
       let session = req.session;
 
       // The user id pulled from the db and stored in userID
-      let userID = await workout_trackerdb.findUserID(body);
+      let userID = await workout_trackerdb.findUserID(formData);
       
       // The user role pulled from the db and stored in userType
-      let userType = await workout_trackerdb.findUserRole(body);
+      let userType = await workout_trackerdb.findUserRole(formData);
 
       // Set the userID on session object to the id of the user that logged in.
       session.userID = userID;
