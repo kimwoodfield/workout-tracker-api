@@ -1,7 +1,6 @@
 const express = require("express");
-const db = require("../db");
-const {workout_trackerdb, getConnection} = require("../db");
-const { body, validationResult } = require('express-validator');
+const { workout_trackerdb } = require("../db");
+const { body, validationResult } = require("express-validator");
 const logger = require("../../logger/logger");
 
 
@@ -17,12 +16,29 @@ router.get("/", (req, res) => {
 
 
 // Handles POST requests made to /register
-router.post("/", async (req, res) => {
+router.post(
+  "/",
+  body("email").isEmail().normalizeEmail().not().isEmpty().trim().escape().isLength({ min: 5 }),
+  body("fullname").not().isEmpty().trim().escape().isLength({ min: 5 }),
+  body("username").not().isEmpty().trim().escape().isLength({ min: 5 }),
+  body("password").not().isEmpty().trim().escape().isLength({ min: 5 }),
+  async (req, res) => {
+
+  // Object provided by express-validator to check errors against
+  const errors = validationResult(req);
 
   // Store IP from Req obj and UserType for logging
   let ip = req.ip;
 
   const body = req.body; // email and password sent by React
+
+  if (!errors.isEmpty()) {
+    console.log('the first if statement in register route');
+    console.log(errors);
+    return res.status(401).json({ errors: errors.array() });
+  }
+
+  console.log('Made it past the validation & sanitization with no errors!');
 
   try {
     const users = await workout_trackerdb.findEmailInBody(body);

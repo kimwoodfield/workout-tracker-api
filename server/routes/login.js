@@ -16,8 +16,8 @@ router.get("/", (req, res) => {
 // Handles POST requests made to /login
 router.post(
   "/",
-  body("username").isLength({ min: 5 }),
-  body("password").isLength({ min: 5 }),
+  body("username").not().isEmpty().trim().escape().isLength({ min: 5 }),
+  body("password").not().isEmpty().trim().escape().isLength({ min: 5 }),
   async (req, res) => {
 
     console.log('body is ', body);
@@ -35,10 +35,13 @@ router.post(
     console.log('errors thing is ', errors);
 
     if (!errors.isEmpty()) {
+      console.log()
       console.log('the first if statement in login route');
       console.log(errors);
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(401).json({ errors: errors.array() });
     }
+
+    console.log('Made it past the first check');
 
     // Username check
     if (formData.username === "") {
