@@ -144,4 +144,41 @@ router.post("/", async (req, res) => {
   }
 });
 
+// If the frontend sends a delete request
+router.delete("/:id", async (req, res) => {
+  console.log("the user sent a delete request");
+
+  // Store IP from Req obj and UserType for logging
+  let ip = req.ip;
+  let userType = req.session.userType.userRole;
+
+  const routine_idString = req.params.id; // workoutID sent by React
+  const routine_id = parseInt(routine_idString);
+  const userID = req.session.userID.userID; // current userID
+
+  console.log("our routineID is ", routine_id, " and our userID is ", userID);
+
+  try {
+    let result = await workout_trackerdb.deleteRoutine(routine_id);
+
+    console.log(result);
+
+    logger.info(
+      `The user successfully deleted a routine. The user is logged in as userType: ${userType} from IP address: ${ip}`
+    );
+
+    return res.status(201).json({
+      msg: "Workout deleted!",
+    });
+  } catch (err) {
+    logger.info(
+      `The user failed to delete a routine. The user is logged in as userType: ${userType} from IP address: ${ip}`
+    );
+    return res.status(500).json({
+      ok: false,
+      msg: "DB Error!",
+    });
+  }
+});
+
 module.exports = router;

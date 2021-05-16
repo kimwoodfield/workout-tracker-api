@@ -344,7 +344,7 @@ workout_trackerdb.showAllExercises = (body) => {
   return new Promise((resolve, reject) => {
     console.log("Made it inside the showAllExercises db func");
     db.query(
-      "SELECT `exercise_name`, `exercise_type` FROM `Exercise`",
+      "SELECT `id`, `exercise_name`, `exercise_type` FROM `Exercise`",
       [],
       (err, results) => {
         console.log("Made it inside the showAllExercises query");
@@ -970,6 +970,50 @@ workout_trackerdb.deleteWorkout = (workout_id, user_id) => {
         if (err) {
           logger.error(`An error occured in the workout_trackerdb.deleteWorkout function. Error was: ${err}`);
           console.log("failed in deleteWorkout function", err);
+          return reject(err);
+        }
+        // Otherwise return our results
+        return resolve({
+          result,
+        });
+      }
+    );
+  });
+};
+
+// Delete routine where routine_id are provided
+workout_trackerdb.deleteRoutine = (routine_id) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "DELETE FROM `routine` WHERE id = ?",
+      [routine_id],
+      (err, result) => {
+        // If there's an error, reject this promise
+        if (err) {
+          logger.error(`An error occured in the workout_trackerdb.deleteWorkout function. Error was: ${err}`);
+          console.log("failed in deleteWorkout function", err);
+          return reject(err);
+        }
+        // Otherwise return our results
+        return resolve({
+          result,
+        });
+      }
+    );
+  });
+};
+
+// Delete exercise where exercise_id are provided
+workout_trackerdb.deleteExercise = (exercise_id) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "DELETE FROM `exercise` WHERE id = ?",
+      [exercise_id],
+      (err, result) => {
+        // If there's an error, reject this promise
+        if (err) {
+          logger.error(`An error occured in the workout_trackerdb.deleteExercise function. Error was: ${err}`);
+          console.log("failed in deleteExercise function", err);
           return reject(err);
         }
         // Otherwise return our results
