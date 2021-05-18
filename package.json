@@ -4,7 +4,8 @@
   "description": "api for workout-tracker web application",
   "main": "server.js",
   "scripts": {
-    "dev": "npx nodemon server/server.js -w server"
+    "dev": "npx nodemon server/server.js -w server",
+    "start": "npx nodemon server/server.js -w server"
   },
   "repository": {
     "type": "git",
