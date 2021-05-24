@@ -73,12 +73,13 @@ router.get("/", async (req, res) => {
 // If a user attempts to post to this endpoint
 router.post("/", async (req, res) => {
   const body = req.body; // username and password sent by React
+
   const letCollectedUserID = req.session.userID;
 
   console.log("Req.session is ... ", req.session);
 
   // Save the userID
-  const userID = letCollectedUserID.userID;
+  const userID = letCollectedUserID;
 
   // Store IP from Req obj and UserType for logging
   let ip = req.ip;
@@ -133,11 +134,13 @@ router.delete("/:id", async (req, res) => {
 
   // Store IP from Req obj and UserType for logging
   let ip = req.ip;
-  let userType = req.session.userType.userRole;
+  let userType = req.session.userType;
+
+  console.log('userType is ', userType);
 
   const workout_idString = req.params.id; // workoutID sent by React
   const workout_id = parseInt(workout_idString);
-  const userID = req.session.userID.userID; // current userID
+  const userID = req.session.userID; // current userID
 
   console.log("our workoutID is ", workout_id, " and our userID is ", userID);
 
