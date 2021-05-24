@@ -34,7 +34,14 @@ app.use(
 app.use(express.json());
 
 // Handles CORS
-app.use(cors({ credentials: true, origin: "http://localhost:3005" }));
+originWhitelist = [
+  "http://localhost:3000",
+  "http://workout-tracker-red.vercel.app/",
+];
+app.use(cors({ 
+  credentials: true, 
+  origin: originWhitelist,
+ }));
 
 // Limits the requests to API
 const dailyLimit = rateLimit({
