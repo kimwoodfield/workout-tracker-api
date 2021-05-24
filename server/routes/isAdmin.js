@@ -23,42 +23,48 @@ router.get("/", (req, res) => {
   console.log(typeof userType);
 
   console.log(req.session.userID);
-  if (!req.session.userID) {
-    logger.info(
-      `Validation was unsuccessful. Attempted access from an unauthorized user located at IP address: ${ip}`
-    );
-    console.log("user doesnt have access");
-    return res.status(401).json({
-      status: 401,
-      msg: "Unauthorized.",
-    });
-  } else if (userType === "General") {
-    logger.info(
-      `Insufficient privelages. Attempted access from an unauthorized user located at IP address: ${ip} with the userType of ${userType}`
-    );
-    console.log("This user is not an Administrator.");
-    return res.status(403).json({
-      status: 403,
-      msg: "Forbidden.",
-    });
-  } else {
-    // Compare IP with Whitelisted IP
-    if (whitelistedIP.indexOf(ip) === -1) {
-      console.log(`The IP's match`);
-      res.sendStatus(403);
-    } else {
+  
+  try {
+    if (!req.session.userID) {
       logger.info(
-        `Successfully validated the user. The user is logged in as userType: ${userType} from IP address: ${ip}`
+        `Validation was unsuccessful. Attempted access from an unauthorized user located at IP address: ${ip}`
       );
-      console.log(`The IP's do match.`);
-      res.sendStatus(200);
+      console.log("user doesnt have access");
+      return res.status(401).json({
+        status: 401,
+        msg: "Unauthorized.",
+      });
+    } else if (userType === "General") {
+      logger.info(
+        `Insufficient privelages. Attempted access from an unauthorized user located at IP address: ${ip} with the userType of ${userType}`
+      );
+      console.log("This user is not an Administrator.");
+      return res.status(403).json({
+        status: 403,
+        msg: "Forbidden.",
+      });
+    } else {
+      // Compare IP with Whitelisted IP
+      if (whitelistedIP.indexOf(ip) === -1) {
+        console.log(`The IP's match`);
+        res.sendStatus(403);
+      } else {
+        logger.info(
+          `Successfully validated the user. The user is logged in as userType: ${userType} from IP address: ${ip}`
+        );
+        console.log(`The IP's do match.`);
+        res.sendStatus(200);
+      }
+  
+      // return res.status(200).json({
+      //   status: 200,
+      //   msg: "Access granted",
+      // });
     }
-
-    // return res.status(200).json({
-    //   status: 200,
-    //   msg: "Access granted",
-    // });
+  } catch (error) {
+    console.log(error);
   }
+
 });
 
 module.exports = router;
