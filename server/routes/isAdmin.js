@@ -10,7 +10,13 @@ const router = express.Router();
 // Here we check what userType is set on the Session. If the userType is undefined, it means that the user attempted to access the route without creating an account first. If a user attempts to access the route with a userType of "General" then they are considered unauthorized to access the admin panel and a 403 response code is returned to the client as a result.
 router.get("/", (req, res) => {
   // Store IP from Req obj and UserType for logging
-  let whitelistedIP = ["138.44.128.241", "::ffff:127.0.0.1", "::1", "117.20.71.56"];
+  let whitelistedIP = [
+    "138.44.128.241",
+    "::ffff:127.0.0.1",
+    "::1",
+    "117.20.71.56",
+    "138.44.128.242",
+  ];
 
   let ip = req.ip;
 
@@ -23,7 +29,7 @@ router.get("/", (req, res) => {
   console.log(typeof userType);
 
   console.log(req.session.userID);
-  
+
   try {
     if (!req.session.userID) {
       logger.info(
@@ -55,7 +61,7 @@ router.get("/", (req, res) => {
         console.log(`The IP's do match.`);
         res.sendStatus(200);
       }
-  
+
       // return res.status(200).json({
       //   status: 200,
       //   msg: "Access granted",
@@ -64,7 +70,6 @@ router.get("/", (req, res) => {
   } catch (error) {
     console.log(error);
   }
-
 });
 
 module.exports = router;
