@@ -732,7 +732,7 @@ workout_trackerdb.addWorkout = (routineID, userID) => {
       (error, result) => {
         // If there's an error, reject this promise
         if (error) {
-          logger.error(`An error occured in the workout_trackerdb.addWorkout function. Error was: ${err}`);
+          logger.error(`An error occured in the workout_trackerdb.addWorkout function. Error was: ${error}`);
           console.log("failed in addWorkout db query because ", error);
           return reject(error);
         }
