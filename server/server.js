@@ -18,17 +18,18 @@ const currentWorkout = require("./routes/currentWorkout");
 const rateLimit = require("express-rate-limit");
 
 // Set sessions
-// app.set('trust proxy', 1) // trust first proxy
 app.use(
   session({
+    proxy: true,
     name: "User cookie",
     secret: "its a secret!",
     resave: false,
     saveUninitialized: false,
+    store: sessionStorage,
     cookie: {
       httpOnly: false,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 60000 * 60 * 48
     },
   })
