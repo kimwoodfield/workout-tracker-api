@@ -34,14 +34,14 @@ app.use(
 app.use(express.json());
 
 // Handles CORS
-// originWhitelist = [
-//   "http://localhost:3000",
-//   "https://workout-tracker-red.vercel.app/",
-// ];
+originWhitelist = [
+  "http://localhost:3000",
+  "https://workout-tracker-red.vercel.app",
+];
 
 app.use(cors({ 
   credentials: true, 
-  origin: "http://localhost:3000",
+  origin: originWhitelist,
   methods: [
     "GET",
     "POST",
