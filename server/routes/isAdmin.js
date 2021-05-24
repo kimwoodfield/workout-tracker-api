@@ -11,7 +11,7 @@ const router = express.Router();
 router.get("/", (req, res) => {
   // Store IP from Req obj and UserType for logging
   let whitelistedIP = [
-    PROCESS.ENV.IPADMIN1,
+    process.env.IPADMIN1,
     "::ffff:127.0.0.1",
     "::1",
     "117.20.71.56",
