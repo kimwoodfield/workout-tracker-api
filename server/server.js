@@ -26,8 +26,10 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
+      httpOnly: false,
       secure: true,
       sameSite: "none",
+      maxAge: 60000 * 60 * 48
     },
   })
 );
