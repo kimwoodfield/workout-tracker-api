@@ -11,7 +11,7 @@ const router = express.Router();
 router.get("/", (req, res) => {
   // Store IP from Req obj and UserType for logging
   let whitelistedIP = [
-    "138.44.128.241",
+    PROCESS.ENV.IPADMIN1,
     "::ffff:127.0.0.1",
     "::1",
     "117.20.71.56",
@@ -61,11 +61,6 @@ router.get("/", (req, res) => {
         console.log(`The IP's do match.`);
         res.sendStatus(200);
       }
-
-      // return res.status(200).json({
-      //   status: 200,
-      //   msg: "Access granted",
-      // });
     }
   } catch (error) {
     console.log(error);
