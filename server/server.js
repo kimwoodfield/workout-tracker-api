@@ -27,15 +27,17 @@ app.use(
     saveUninitialized: false,
     cookie: {
       secure: true,
-      sameSite: 'none',
+      sameSite: "none",
     },
   })
 );
 app.use(express.json());
 
+
 // Handles CORS
 originWhitelist = [
   "http://localhost:3000",
+  "http://localhost:3005",
   "https://workout-tracker-red.vercel.app",
 ];
 
@@ -56,6 +58,7 @@ app.use(cors({
   ],
  }));
 
+
 // Limits the requests to API
 const dailyLimit = rateLimit({
   windowMs: 1000 * 60 * 60 * 24,
@@ -66,6 +69,7 @@ const userLimit = rateLimit({
   max: 10, // Limits each user to 10 requests/second
 });
 app.use(dailyLimit, userLimit);
+
 
 // Handle routes
 app.use("/login", login);

@@ -10,11 +10,15 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   // Store IP from Req obj and UserType for logging
 
+  console.log('the session in workouts route is ', req.session);
+  console.log('the user id on the session is ', req.session.userID);
+
   let ip = req.ip;
-  let userType = req.session.userType.userRole;
+  console.log(req.session);
+  let userType = req.session.userType;
 
   // Store the current user's id
-  const user_id = req.session.userID.userID; // current userID
+  const user_id = req.session.userID; // current userID
 
   if (user_id == undefined) {
     logger.info(

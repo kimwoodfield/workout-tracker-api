@@ -276,6 +276,7 @@ workout_trackerdb.loginDetailsMatch = (body) => {
           return reject(err);
         }
         console.log(result);
+        console.log('we were successful in matching the loginDetails');
         // Otherwise return our results
         return resolve({
           result,
@@ -302,6 +303,8 @@ workout_trackerdb.findUserID = (body) => {
         }
         // Otherwise update the userID variable we created with the id of the user that logged in
         // console.log(result[0].id);
+        console.log('we succeeded in findUserId');
+        console.log('the result from this query was ', result[0].id);
         userID = result[0].id;
         // Then return the userID with the new id
         return resolve({
@@ -328,7 +331,6 @@ workout_trackerdb.findUserRole = (body) => {
           return reject(err);
         }
         // Otherwise update the userID variable we created with the id of the user that logged in
-        // console.log(result[0].id);
         userRole = result[0].role;
         // Then return the userID with the new id
         return resolve({

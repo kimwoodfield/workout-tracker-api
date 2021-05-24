@@ -127,14 +127,20 @@ router.post(
       let session = req.session;
 
       // The user id pulled from the db and stored in userID
-      let userID = await workout_trackerdb.findUserID(formData);
+      let foundUserID = await workout_trackerdb.findUserID(formData);
+      let userID = foundUserID.userID;
+      console.log('the userID is ', userID);
       
       // The user role pulled from the db and stored in userType
-      let userType = await workout_trackerdb.findUserRole(formData);
+      let foundUserType = await workout_trackerdb.findUserRole(formData);
+      let userType = foundUserType.userRole;
+      console.log('userType is ', userType);
+      
 
       // Set the userID on session object to the id of the user that logged in.
       session.userID = userID;
       session.userType = userType;
+ 
 
       // Log the success to the logger file
       logger.info(`Validation was successful. Logged in as userType: ${userType.userRole} from IP address: ${ip}`);
