@@ -55,6 +55,7 @@ router.get("/", async (req, res) => {
       workouts,
     });
   } catch (err) {
+    console.log(err);
     logger.info(
       `Could not retrieve the workouts for the current user. The user is logged in as userType: ${userType} from IP address: ${ip}`
     );
