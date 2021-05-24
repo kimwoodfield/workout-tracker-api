@@ -75,7 +75,7 @@ try {
         });
     } else {
         logger.info(`The user was successful in retrieving routine names, the id and exercises associated with the routine but there were no routines to display. The user is logged in as userType: ${userType} from IP address: ${ip}`);
-        return res.status(201).json({
+        return res.status(204).json({
             ok: true,
             msg: 'There are no routines!'
         });
