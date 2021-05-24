@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
   console.log("this is the whiteListed[1] ", whitelistedIP[1]);
   console.log("This is req.ip ", req.ip);
 
-  let userType = req.session.userType.userRole;
+  let userType = req.session.userType;
 
   console.log(userType);
   console.log(typeof userType);
