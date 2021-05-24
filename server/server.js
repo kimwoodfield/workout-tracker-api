@@ -41,6 +41,18 @@ originWhitelist = [
 app.use(cors({ 
   credentials: true, 
   origin: originWhitelist,
+  methods: [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "HEAD",
+    "OPTIONS"
+  ],
+  allowedHeaders: [
+    "Origin", "Content-Type", "Authorization", "x-requested-with"
+  ],
  }));
 
 // Limits the requests to API
