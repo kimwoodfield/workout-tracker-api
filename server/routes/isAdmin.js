@@ -28,9 +28,9 @@ router.get("/", (req, res) => {
       `Validation was unsuccessful. Attempted access from an unauthorized user located at IP address: ${ip}`
     );
     console.log("user doesnt have access");
-    return res.status(403).json({
-      status: 403,
-      msg: "Forbidden.",
+    return res.status(401).json({
+      status: 401,
+      msg: "Unauthorized.",
     });
   } else if (userType === "General") {
     logger.info(
