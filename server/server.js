@@ -36,7 +36,7 @@ app.use(express.json());
 // Handles CORS
 originWhitelist = [
   "http://localhost:3000",
-  "http://workout-tracker-red.vercel.app/",
+  "https://workout-tracker-red.vercel.app/",
 ];
 app.use(cors({ 
   credentials: true, 
