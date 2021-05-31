@@ -138,6 +138,7 @@ router.post(
       
 
       // Set the userID on session object to the id of the user that logged in.
+      // Session object was instantiated here because it made the most sense for a user to receive an ID once they begin using the app.
       session.userID = userID;
       session.userType = userType;
  

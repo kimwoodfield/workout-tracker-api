@@ -4,6 +4,8 @@ require("dotenv").config();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+// The database was instansiated in its own file called ‘index.js’ inside a folder within the API repository called ‘db’. This seemed like the most appropriate place for me to put it as I had no intention of mixing my database queries in with my top level app file. This was largely due to placing an emphasis on separation of concerns.
+
 
 // Create connection pool to query db
 const db = mysql.createPool({

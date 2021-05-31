@@ -35,13 +35,14 @@ app.use(
 );
 app.use(express.json());
 
-// Handles CORS
+
 originWhitelist = [
   "http://localhost:3000",
   "http://localhost:3005",
   "https://workout-tracker-red.vercel.app",
 ];
 
+// Handles CORS
 app.use(
   cors({
     credentials: true,
@@ -58,16 +59,17 @@ app.use(
 
 // Limits the requests to API
 const dailyLimit = rateLimit({
-  windowMs: 1000 * 60 * 60 * 24,
-  max: 3000, // Limits each IP to 1000 requests/day
+  windowMs: 1000 * 60 * 60 * 24, // 24 hours (24 * 60mins * 60sec * 1000ms to get number of ms in 24 hours)
+  max: 3000, // Limit each IP to 3000 requests per windowMs (3000 per 24 hours)
 });
 const userLimit = rateLimit({
-  windowMs: 1000,
+  windowMs: 1000, // 1 second
   max: 10, // Limits each user to 10 requests/second
+  // More Than 1 per second required to handle multiple components rendering / fetching at once
 });
 app.use(dailyLimit, userLimit);
 
-// Handle routes
+// Handle routes, redirects any requests made to their appropriate route via the in-built express router
 app.use("/login", login);
 app.use("/isAdmin", isAdmin);
 app.use("/register", register);
