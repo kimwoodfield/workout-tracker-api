@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "dev": "npx nodemon server/server.js -w server",
-    "start": "npx nodemon server/server.js -w server"
+    "start": "npx nodemon server/server.js -w server",
+    "test": "jest --detectOpenHandles --forceExit",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
