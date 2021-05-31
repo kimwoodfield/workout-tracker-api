@@ -33,3 +33,16 @@ describe("POST register endpoint - successful", () => {
     expect(response.status).toEqual(201);
   });
 });
+
+// Test register route with an existing email
+describe("POST register endpoint - email already exists", () => {
+  test("Should respond 409", async () => {
+    const response = await request.post("/register").send({
+      email: "kimwoodfield@hotmail.com",
+      fullname: "Kim Woodfield",
+      username: "Kwoodfield2",
+      password: "Password1",
+    });
+    expect(response.status).toEqual(409);
+  });
+});
