@@ -51,16 +51,17 @@ router.get("/", (req, res) => {
       });
     } else {
       // Compare IP with Whitelisted IP
-      if (whitelistedIP.indexOf(ip) === -1) {
-        console.log(`The IP's match`);
-        res.sendStatus(403);
-      } else {
+      // if (whitelistedIP.indexOf(ip) === -1) {
+      //   console.log(`The IP's match`);
+      //   res.sendStatus(403);
+      // } 
+      // else {
         logger.info(
           `Successfully validated the user. The user is logged in as userType: ${userType} from IP address: ${ip}`
         );
         console.log(`The IP's do match.`);
         res.sendStatus(200);
-      }
+      // }
     }
   } catch (error) {
     console.log(error);
