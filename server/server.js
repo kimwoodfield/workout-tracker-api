@@ -35,7 +35,6 @@ app.use(
 );
 app.use(express.json());
 
-
 originWhitelist = [
   "http://localhost:3000",
   "http://localhost:3005",
